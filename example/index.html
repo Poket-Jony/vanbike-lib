@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VanBike-Lib</title>
+</head>
+<body>
+<div>
+    <input id="username" type="text" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+    <button id="retrieveEncryptionKey">Retrieve Encryption-Key</button>
+    <br><br>
+    <input id="encryptionKey" type="text" placeholder="Encryption-Key">
+    <button id="connect">Connect</button>
+</div>
+<br><br>
+<div>
+    <button id="getFirmwareRevision">Get Firmware Revision</button>
+    <button id="moduleOnAndUnlock">Module On & Unlock</button>
+    <br><br>
+    <input id="lightning" type="number" value="0" min="0" max="4">
+    <button id="setLightning">Set Lightning</button>
+    <br><br>
+    <input id="powerLevel" type="number" value="0" min="0" max="4">
+    <button id="setPowerLevel">Set Power Level</button>
+</div>
+
+<script type="text/javascript" src="../dist/vanbike-lib.js"></script>
+<script type="text/javascript">
+    document.querySelector('#retrieveEncryptionKey').addEventListener('click', async () => {
+        const webService = new VanBikeLib.WebService();
+        const success = await webService.authenticate(document.querySelector('#username').value, document.querySelector('#password').value);
+        if(success) {
+            document.querySelector('#encryptionKey').value = await webService.getEncryptionKey();
+        }
+    });
+
+    document.querySelector('#connect').addEventListener('click', async () => {
+        window.vanBikeService = new VanBikeLib.VanBikeService(document.querySelector('#encryptionKey').value);
+        vanBikeService.notify((parameters) => {
+            console.log(parameters);
+        });
+        await vanBikeService.connect();
+
+        await vanBikeService.authenticate();
+    });
+
+    document.querySelector('#getFirmwareRevision').addEventListener('click', async () => {
+        // Retrieve Firmware Revision
+        console.log('Firmware Revision: ' + await vanBikeService.getBluetoothService().getFirmwareRevision());
+    });
+
+
+    document.querySelector('#moduleOnAndUnlock').addEventListener('click', async () => {
+        // Turn on
+        const moduleState = new VanBikeLib.ModuleStateEntity();
+        moduleState.setState(moduleState.STATE_ON);
+        await vanBikeService.setModuleState(moduleState);
+
+        // Unlock
+        const lockState = new VanBikeLib.LockStateEntity();
+        lockState.setState(lockState.STATE_UNLOCKED);
+        await vanBikeService.setLockState(lockState);
+    });
+
+    document.querySelector('#setLightning').addEventListener('click', async () => {
+        // Lightning
+        const lightningState = new VanBikeLib.LightningStateEntity();
+        lightningState.setState(new Uint8Array([document.querySelector('#lightning').value]));
+        await vanBikeService.setLightningState(lightningState);
+    });
+
+    document.querySelector('#setPowerLevel').addEventListener('click', async () => {
+        // PowerLevel
+        const powerLevelState = new VanBikeLib.PowerLevelStateEntity();
+        powerLevelState.setState(new Uint8Array([document.querySelector('#powerLevel').value]));
+        const regionState = new VanBikeLib.RegionStateEntity();
+        regionState.setState(regionState.STATE_EU);
+        await vanBikeService.setPowerLevelState(powerLevelState, regionState);
+    });
+</script>
+</body>
+</html>

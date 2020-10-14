@@ -1,0 +1,25 @@
+{
+  "name": "vanbike-lib",
+  "description": "Access VanMoof Bikes without App",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "repository": "https://github.com/Poket-Jony/vanbike-lib.git",
+  "author": {
+    "name": "Jonas Plamann",
+    "url": "https://github.com/Poket-Jony"
+  },
+  "license": "MIT",
+  "scripts": {
+    "dev": "yarn encore dev",
+    "prod": "yarn encore production"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-transform-runtime": "^7.11.5",
+    "@symfony/webpack-encore": "^0.31.0"
+  },
+  "dependencies": {
+    "aes-js": "^3.1.2",
+    "axios": "^0.20.0"
+  }
+}
