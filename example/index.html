@@ -12,11 +12,13 @@
     <br><br>
     <input id="encryptionKey" type="text" placeholder="Encryption-Key">
     <button id="connect">Connect</button>
+    <button id="disconnect">Disconnect</button>
 </div>
 <br><br>
 <div>
     <button id="getFirmwareRevision">Get Firmware Revision</button>
-    <button id="moduleOnAndUnlock">Module On & Unlock</button>
+    <button id="moduleOn">Module On</button>
+    <button id="unlock">Unlock</button>
     <br><br>
     <input id="lightning" type="number" value="0" min="0" max="4">
     <button id="setLightning">Set Lightning</button>
@@ -46,18 +48,25 @@
         await vanBikeService.authenticate();
     });
 
+    document.querySelector('#disconnect').addEventListener('click', async () => {
+        await vanBikeService.disconnect();
+        window.vanBikeService = undefined;
+    });
+
     document.querySelector('#getFirmwareRevision').addEventListener('click', async () => {
         // Retrieve Firmware Revision
         console.log('Firmware Revision: ' + await vanBikeService.getBluetoothService().getFirmwareRevision());
     });
 
 
-    document.querySelector('#moduleOnAndUnlock').addEventListener('click', async () => {
+    document.querySelector('#moduleOn').addEventListener('click', async () => {
         // Turn on
         const moduleState = new VanBikeLib.ModuleStateEntity();
         moduleState.setState(moduleState.STATE_ON);
         await vanBikeService.setModuleState(moduleState);
+    });
 
+    document.querySelector('#unlock').addEventListener('click', async () => {
         // Unlock
         const lockState = new VanBikeLib.LockStateEntity();
         lockState.setState(lockState.STATE_UNLOCKED);

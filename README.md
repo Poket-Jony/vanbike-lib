@@ -19,12 +19,16 @@
 * Show Firmware
 * Reset Distance
 * Pair Remote
+* Error Logging
+* Set Offroad Mode
+* Update Firmware (not implemented)
 * ...
 
 ## Compatibility
-* Electrified S/X1 (2016/2017) - tested
-* Electrified S/X2 - untested (some Parameters missing)
-* Electrified S/X3 - untested (some Parameters missing)
+* Electrified S/X 1 (2016/2017) - tested
+* Smart S/X 1 (2018) - not compatible (profile missing)
+* Electrified S/X 2 - untested (some parameters/functions missing)
+* Electrified S/X 3 - untested (some parameters/functions missing)
 
 ## Usage
 ### Install
@@ -108,6 +112,13 @@ vanBikeService.disconnect();
 * `showFirmware() : Promise`
 * `resetDistance() : Promise`
 * `pairRemote() : Promise`
+* `enableErrors() : Promise`
+* `disableErrors() : Promise`
+* `setOffroadMode() : Promise`
+
+__Todo:__
+* `startFirmwareUpdate(FirmwareEntity firmware) : Promise`
+* `stopFirmwareUpdate() : Promise`
 
 ## Notice
 ### CORS Policy

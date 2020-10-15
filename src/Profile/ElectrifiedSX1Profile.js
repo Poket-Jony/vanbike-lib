@@ -40,6 +40,7 @@ export default class {
     COMMAND_RESET_DISTANCE = new Uint8Array([9]);
     COMMAND_ENABLE_ERRORS = new Uint8Array([10]);
     COMMAND_DISABLE_ERRORS = new Uint8Array([11]);
+    COMMAND_SET_OFFROAD_MODE = new Uint8Array([12]);
     COMMAND_FIRMWARE_UPDATE = new Uint8Array([13]);
 
     createParametersEntity(parametersData) {

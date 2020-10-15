@@ -90,9 +90,18 @@ export default class {
         return this._bluetoothService.sendFunction(command);
     }
 
-    /*async startFirmwareUpdate(firmwareFile) {
+    async setOffroadMode() {
+        const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_SET_OFFROAD_MODE);
+        return this._bluetoothService.sendFunction(command);
+    }
+
+    async startFirmwareUpdate(firmwareFile) {
         //@todo
         const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_FIRMWARE_UPDATE, new Uint8Array([1]));
         return this._bluetoothService.sendFunction(command);
-    }*/
+    }
+
+    async stopFirmwareUpdate() {
+        //@todo
+    }
 };
