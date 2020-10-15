@@ -22,14 +22,9 @@
 * ...
 
 ## Compatibility
-* Electrified S (2016) - possible
-* Electrified X (2016) - possible
-* Electrified S (2017) - tested
-* Electrified X (2017) - possible
-* Electrified S2 - untested
-* Electrified X2 - untested
-* Electrified S3 - untested
-* Electrified X3 - untested
+* Electrified S/X1 (2016/2017) - tested
+* Electrified S/X2 - untested (some Parameters missing)
+* Electrified S/X3 - untested (some Parameters missing)
 
 ## Usage
 ### Install

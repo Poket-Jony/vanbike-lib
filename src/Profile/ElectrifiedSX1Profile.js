@@ -1,3 +1,13 @@
+import ParametersEntity from '../Entity/ParametersEntity';
+import ModuleStateEntity from '../Entity/ModuleStateEntity';
+import BatteryStateEntity from '../Entity/BatteryStateEntity';
+import ErrorCodeStateEntity from '../Entity/ErrorCodeStateEntity';
+import LightningStateEntity from '../Entity/LightningStateEntity';
+import PowerLevelStateEntity from '../Entity/PowerLevelStateEntity';
+import RegionStateEntity from '../Entity/RegionStateEntity';
+import UnitStateEntity from '../Entity/UnitStateEntity';
+import RunModeStateEntity from '../Entity/RunModeStateEntity';
+
 export default class {
     SERVICE_BIKE = '8e7f1a50-087a-44c9-b292-a2c628fdd9aa';
     CHARACTERISTIC_CHALLENGE = '8e7f1a51-087a-44c9-b292-a2c628fdd9aa';
@@ -31,4 +41,24 @@ export default class {
     COMMAND_ENABLE_ERRORS = new Uint8Array([10]);
     COMMAND_DISABLE_ERRORS = new Uint8Array([11]);
     COMMAND_FIRMWARE_UPDATE = new Uint8Array([13]);
+
+    createParametersEntity(parametersData) {
+        const moduleState = new ModuleStateEntity();
+        moduleState.setState(parametersData[2] === 1 ? moduleState.STATE_ON : moduleState.STATE_STANDBY);
+
+        return (new ParametersEntity())
+            .setModuleState(moduleState)
+            .setUnlockRequest(parametersData[3] === 1)
+            .setSpeed(parametersData[4])
+            .setBikeBatteryLevel(new BatteryStateEntity(parametersData[5]))
+            .setModuleBatteryLevel(new BatteryStateEntity(parametersData[6]))
+            .setLightning(new LightningStateEntity(parametersData[7]))
+            .setPowerLevel(new PowerLevelStateEntity(parametersData[8]))
+            .setRegion(new RegionStateEntity(parametersData[9]))
+            .setUnit(new UnitStateEntity(parametersData[10]))
+            .setDistance(parametersData[11] + (parametersData[12] << 8) + (parametersData[13] << 16) + (parametersData[14] << 24))
+            .setErrorCode(new ErrorCodeStateEntity((parametersData[15] & 248) >> 3))
+            .setRunMode(new RunModeStateEntity(parametersData[15] & 7))
+        ;
+    }
 };

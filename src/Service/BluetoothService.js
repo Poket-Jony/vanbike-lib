@@ -64,7 +64,7 @@ export default class {
 
             this._parameterCharacteristic.addEventListener('characteristicvaluechanged', (event) => {
                 this._notifier.forEach((callback) => {
-                    callback(new ParametersEntity(this._cryptService.decrypt(new Uint8Array(event.target.value.buffer))));
+                    callback(this._bikeProfile.createParametersEntity(this._cryptService.decrypt(new Uint8Array(event.target.value.buffer))));
                 });
             });
             await this._parameterCharacteristic.startNotifications();
@@ -124,7 +124,7 @@ export default class {
 
     async getParameters() {
         const command = (new BluetoothReadCommandEntity()).setService(this._bikeService).setCharacteristic(this._parameterCharacteristic);
-        return new ParametersEntity(await this._read(command));
+        return this._bikeProfile.createParametersEntity(await this._read(command));
     }
 
     async sendFunction(bluetoothCommand) {

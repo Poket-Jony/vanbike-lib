@@ -22,6 +22,9 @@ import PowerLevelStateEntity from './Entity/PowerLevelStateEntity';
 import RegionStateEntity from './Entity/RegionStateEntity';
 import RunModeStateEntity from './Entity/RunModeStateEntity';
 import UnitStateEntity from './Entity/UnitStateEntity';
+import AlarmStateEntity from './Entity/AlarmStateEntity';
+import SleepStateEntity from './Entity/SleepStateEntity';
+import TrackingStateEntity from './Entity/TrackingStateEntity';
 
 export {
     // Services
@@ -48,4 +51,7 @@ export {
     RegionStateEntity,
     RunModeStateEntity,
     UnitStateEntity,
+    AlarmStateEntity,
+    SleepStateEntity,
+    TrackingStateEntity,
 };

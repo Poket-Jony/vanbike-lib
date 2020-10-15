@@ -2,7 +2,7 @@ export default class {
     state;
 
     constructor(state = undefined) {
-        this.state = state;
+        this.setState(state);
     }
 
     getState() {
@@ -11,6 +11,9 @@ export default class {
 
     setState(state) {
         this.state = state;
+        if(state !== undefined && state !== null && !Array.isArray(state)) {
+            this.state = new Uint8Array([state]);
+        }
         return this;
     }
 };

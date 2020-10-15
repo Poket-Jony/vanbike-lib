@@ -1,5 +1,5 @@
-import ElectrifiedSX1Profile from './ElectrifiedSX1Profile';
+import ElectrifiedSX2Profile from './ElectrifiedSX2Profile';
 
-export default class extends ElectrifiedSX1Profile {
+export default class extends ElectrifiedSX2Profile {
 
 };
