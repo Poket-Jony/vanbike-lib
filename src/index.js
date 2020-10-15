@@ -4,6 +4,11 @@ import BluetoothService from './Service/BluetoothService';
 import CryptService from './Service/CryptService';
 import WebService from './Service/WebService';
 
+// Profiles
+import ElectrifiedSX1Profile from './Profile/ElectrifiedSX1Profile';
+import ElectrifiedSX2Profile from './Profile/ElectrifiedSX2Profile';
+import ElectrifiedSX3Profile from './Profile/ElectrifiedSX3Profile';
+
 // Entities
 import BluetoothReadCommandEntity from './Entity/Bluetooth/BluetoothReadCommandEntity';
 import BluetoothWriteCommandEntity from './Entity/Bluetooth/BluetoothWriteCommandEntity';
@@ -24,6 +29,11 @@ export {
     BluetoothService,
     CryptService,
     WebService,
+
+    // Profiles
+    ElectrifiedSX1Profile,
+    ElectrifiedSX2Profile,
+    ElectrifiedSX3Profile,
 
     // Entities
     BluetoothReadCommandEntity,

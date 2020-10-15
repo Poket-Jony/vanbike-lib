@@ -1,22 +1,8 @@
 import ParametersEntity from '../Entity/ParametersEntity';
 import BluetoothReadCommandEntity from '../Entity/Bluetooth/BluetoothReadCommandEntity';
-import BluetoothWriteCommandEntity from "../Entity/Bluetooth/BluetoothWriteCommandEntity";
 
 export default class {
-    SERVICE_BIKE = '8e7f1a50-087a-44c9-b292-a2c628fdd9aa';
-    SERVICE_DEVICE_INFORMATION = '0000180a-0000-1000-8000-00805f9b34fb';
-
-    CHARACTERISTIC_CHALLENGE = '8e7f1a51-087a-44c9-b292-a2c628fdd9aa';
-    CHARACTERISTIC_NEW_PRIVATE_KEY = '8e7f1a52-087a-44c9-b292-a2c628fdd9aa';
-    CHARACTERISTIC_FUNCTIONS = '8e7f1a53-087a-44c9-b292-a2c628fdd9aa';
-    CHARACTERISTIC_PARAMETERS = '8e7f1a54-087a-44c9-b292-a2c628fdd9aa';
-    CHARACTERISTIC_CLIENT_CONFIG = '00002902-0000-1000-8000-00805f9b34fb';
-    CHARACTERISTIC_FIRMWARE_REVISION = '00002a26-0000-1000-8000-00805f9b34fb';
-    CHARACTERISTIC_HARDWARE_REVISION = '00002a27-0000-1000-8000-00805f9b34fb';
-    CHARACTERISTIC_SOFTWARE_REVISION = '00002a28-0000-1000-8000-00805f9b34fb';
-    CHARACTERISTIC_MODEL_NUMBER = '00002a24-0000-1000-8000-00805f9b34fb';
-    CHARACTERISTIC_SERIAL_NUMBER = '00002a25-0000-1000-8000-00805f9b34fb';
-
+    _bikeProfile;
     _cryptService;
     _device;
     _gattServer;
@@ -35,14 +21,15 @@ export default class {
     _notifier = [];
     _started = false;
 
-    constructor(crypt) {
+    constructor(bikeProfile, crypt) {
+        this._bikeProfile = bikeProfile;
         this._cryptService = crypt;
     }
 
     async connect() {
         this._device = await navigator.bluetooth.requestDevice({
-            filters: [{services: [this.SERVICE_BIKE]}],
-            optionalServices: [this.SERVICE_DEVICE_INFORMATION],
+            filters: [{services: [this._bikeProfile.SERVICE_BIKE]}],
+            optionalServices: [this._bikeProfile.SERVICE_DEVICE_INFORMATION],
         });
         this._device.addEventListener('gattserverdisconnected', async () => {
             if(this._started) {
@@ -56,23 +43,23 @@ export default class {
 
     async _discoverServicesAndCharacteristics() {
         if(this.isConnected()) {
-            this._bikeService = await this._gattServer.getPrimaryService(this.SERVICE_BIKE);
+            this._bikeService = await this._gattServer.getPrimaryService(this._bikeProfile.SERVICE_BIKE);
 
-            this._challengeCharacteristic = await this._bikeService.getCharacteristic(this.CHARACTERISTIC_CHALLENGE);
-            this._parameterCharacteristic = await this._bikeService.getCharacteristic(this.CHARACTERISTIC_PARAMETERS);
-            this._functionsCharacteristic = await this._bikeService.getCharacteristic(this.CHARACTERISTIC_FUNCTIONS);
-            this._newPrivateKeyCharacteristic = await this._bikeService.getCharacteristic(this.CHARACTERISTIC_NEW_PRIVATE_KEY);
+            this._challengeCharacteristic = await this._bikeService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_CHALLENGE);
+            this._parameterCharacteristic = await this._bikeService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_PARAMETERS);
+            this._functionsCharacteristic = await this._bikeService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_FUNCTIONS);
+            this._newPrivateKeyCharacteristic = await this._bikeService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_NEW_PRIVATE_KEY);
 
             try {
-                this._deviceInfoService = await this._gattServer.getPrimaryService(this.SERVICE_DEVICE_INFORMATION);
+                this._deviceInfoService = await this._gattServer.getPrimaryService(this._bikeProfile.SERVICE_DEVICE_INFORMATION);
 
-                this._firmwareRevisionCharacteristic = await this._deviceInfoService.getCharacteristic(this.CHARACTERISTIC_FIRMWARE_REVISION);
-                this._hardwareRevisionCharacteristic = await this._deviceInfoService.getCharacteristic(this.CHARACTERISTIC_HARDWARE_REVISION);
-                this._softwareRevisionCharacteristic = await this._deviceInfoService.getCharacteristic(this.CHARACTERISTIC_SOFTWARE_REVISION);
+                this._firmwareRevisionCharacteristic = await this._deviceInfoService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_FIRMWARE_REVISION);
+                this._hardwareRevisionCharacteristic = await this._deviceInfoService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_HARDWARE_REVISION);
+                this._softwareRevisionCharacteristic = await this._deviceInfoService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_SOFTWARE_REVISION);
 
-                this._clientConfigCharacteristic = await this._deviceInfoService.getCharacteristic(this.CHARACTERISTIC_CLIENT_CONFIG);
-                this._modelNumberCharacteristic = await this._deviceInfoService.getCharacteristic(this.CHARACTERISTIC_MODEL_NUMBER);
-                this._serialNumberCharacteristic = await this._deviceInfoService.getCharacteristic(this.CHARACTERISTIC_SERIAL_NUMBER);
+                this._clientConfigCharacteristic = await this._deviceInfoService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_CLIENT_CONFIG);
+                this._modelNumberCharacteristic = await this._deviceInfoService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_MODEL_NUMBER);
+                this._serialNumberCharacteristic = await this._deviceInfoService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_SERIAL_NUMBER);
             } catch (e) {}
 
             this._parameterCharacteristic.addEventListener('characteristicvaluechanged', (event) => {

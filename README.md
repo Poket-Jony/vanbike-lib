@@ -52,8 +52,9 @@ yarn prod
 
 ### ES6
 ```javascript
-import { VanBikeService, ModuleStateEntity, LockStateEntity } from 'vanbike-lib';
-const vanBikeService = new VanBikeService('ENCRYPTION-KEY');
+import { VanBikeService, ElectrifiedSX1Profile, ModuleStateEntity, LockStateEntity } from 'vanbike-lib';
+const bikeProfile = new ElectrifiedSX1Profile();
+const vanBikeService = new VanBikeService(bikeProfile, 'ENCRYPTION-KEY');
 ```
 
 ### Browser
@@ -61,7 +62,8 @@ const vanBikeService = new VanBikeService('ENCRYPTION-KEY');
 <script type="text/javascript" src="/dist/vanbike-lib.js"></script>
 ```
 ```javascript
-const vanBikeService = new VanBikeLib.VanBikeService('ENCRYPTION-KEY');
+const bikeProfile = new VanBikeLib.ElectrifiedSX1Profile();
+const vanBikeService = new VanBikeLib.VanBikeService(bikeProfile, 'ENCRYPTION-KEY');
 const ModuleStateEntity = VanBikeLib.ModuleStateEntity;
 const LockStateEntity = VanBikeLib.LockStateEntity;
 ```

@@ -36,7 +36,8 @@
     });
 
     document.querySelector('#connect').addEventListener('click', async () => {
-        window.vanBikeService = new VanBikeLib.VanBikeService(document.querySelector('#encryptionKey').value);
+        const bikeProfile = new VanBikeLib.ElectrifiedSX1Profile();
+        window.vanBikeService = new VanBikeLib.VanBikeService(bikeProfile, document.querySelector('#encryptionKey').value);
         vanBikeService.notify((parameters) => {
             console.log(parameters);
         });
