@@ -57,6 +57,8 @@ See [full list](https://developer.mozilla.org/docs/Web/API/Web_Bluetooth_API#Bro
 
 ## Usage
 #### Install
+Download pre build file from [GitHub-Releases](https://github.com/Poket-Jony/vanbike-lib/releases/latest) or add via NPM.
+
 ```shell script
 # Yarn
 yarn add Poket-Jony/vanbike-lib
@@ -65,7 +67,7 @@ yarn add Poket-Jony/vanbike-lib
 npm i Poket-Jony/vanbike-lib
 ```
 
-#### Build Distribution
+#### Build
 ```shell script
 # Development
 yarn dev
