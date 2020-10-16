@@ -1,3 +1,6 @@
+// Drivers
+import WebBluetoothDriver from './Driver/WebBluetoothDriver';
+
 // Services
 import VanBikeService from './Service/VanBikeService';
 import BluetoothService from './Service/BluetoothService';
@@ -27,6 +30,9 @@ import SleepStateEntity from './Entity/SleepStateEntity';
 import TrackingStateEntity from './Entity/TrackingStateEntity';
 
 export {
+    //Drivers
+    WebBluetoothDriver,
+
     // Services
     VanBikeService,
     BluetoothService,

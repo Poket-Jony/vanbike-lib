@@ -61,10 +61,10 @@ Download pre build file from [GitHub-Releases](https://github.com/Poket-Jony/van
 
 ```shell script
 # Yarn
-yarn add Poket-Jony/vanbike-lib
+yarn add poket-jony/vanbike-lib
 
 # NPM
-npm i Poket-Jony/vanbike-lib
+npm i poket-jony/vanbike-lib
 ```
 
 #### Build
