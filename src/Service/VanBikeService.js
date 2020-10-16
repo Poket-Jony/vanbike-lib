@@ -1,16 +1,21 @@
 import CryptService from './CryptService';
 import BluetoothService from './BluetoothService';
 import BluetoothWriteCommandEntity from '../Entity/Bluetooth/BluetoothWriteCommandEntity';
+import WebBluetoothDriver from '../Driver/WebBluetoothDriver';
 
 export default class {
     _bikeProfile;
     _cryptService;
     _bluetoothService;
 
-    constructor(bikeProfile, encryptionKey) {
+    constructor(bikeProfile, encryptionKey, bluetoothDriver = undefined) {
         this._bikeProfile = bikeProfile;
         this._cryptService = new CryptService(encryptionKey);
-        this._bluetoothService = new BluetoothService(bikeProfile, this._cryptService);
+        this._bluetoothService = new BluetoothService(
+            bikeProfile,
+            bluetoothDriver ? bluetoothDriver : new WebBluetoothDriver(),
+            this._cryptService
+        );
     }
 
     getBluetoothService() {
@@ -29,8 +34,12 @@ export default class {
         return this._bluetoothService.isConnected();
     }
 
-    notify(callback) {
-        return this._bluetoothService.notify(callback);
+    subscribe(callback) {
+        return this._bluetoothService.subscribe(callback);
+    }
+
+    unsubscribe(handleIndex) {
+        return this._bluetoothService.unsubscribe(handleIndex);
     }
 
     async authenticate() {

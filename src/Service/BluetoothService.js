@@ -3,6 +3,7 @@ import BluetoothReadCommandEntity from '../Entity/Bluetooth/BluetoothReadCommand
 
 export default class {
     _bikeProfile;
+    _bluetoothDriver;
     _cryptService;
     _device;
     _gattServer;
@@ -18,63 +19,66 @@ export default class {
     _clientConfigCharacteristic;
     _modelNumberCharacteristic;
     _serialNumberCharacteristic;
-    _notifier = [];
+    _subscribers = [];
     _started = false;
 
-    constructor(bikeProfile, crypt) {
+    constructor(bikeProfile, bluetoothDriver, crypt) {
         this._bikeProfile = bikeProfile;
+        this._bluetoothDriver = bluetoothDriver;
         this._cryptService = crypt;
     }
 
     async connect() {
-        this._device = await navigator.bluetooth.requestDevice({
-            filters: [{services: [this._bikeProfile.SERVICE_BIKE]}],
-            optionalServices: [this._bikeProfile.SERVICE_DEVICE_INFORMATION],
-        });
-        this._device.addEventListener('gattserverdisconnected', async () => {
+        if(!(await this._bluetoothDriver.isAvailable())) {
+            throw new Error('Bluetooth driver not available');
+        }
+        this._device = await this._bluetoothDriver.getDevice(
+            [this._bikeProfile.SERVICE_BIKE],
+            [this._bikeProfile.SERVICE_DEVICE_INFORMATION]
+        );
+        await this._bluetoothDriver.subscribeDeviceDisconnect(this._device, async () => {
             if(this._started) {
                 await this.reconnect();
             }
         });
-        this._gattServer = await this._device.gatt.connect();
+        this._gattServer = this._bluetoothDriver.getGattServer(this._device);
+        await this._bluetoothDriver.connect(this._gattServer);
         this._started = true;
         await this._discoverServicesAndCharacteristics();
     }
 
     async _discoverServicesAndCharacteristics() {
         if(this.isConnected()) {
-            this._bikeService = await this._gattServer.getPrimaryService(this._bikeProfile.SERVICE_BIKE);
+            this._bikeService = await this._bluetoothDriver.getService(this._gattServer, this._bikeProfile.SERVICE_BIKE);
 
-            this._challengeCharacteristic = await this._bikeService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_CHALLENGE);
-            this._parameterCharacteristic = await this._bikeService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_PARAMETERS);
-            this._functionsCharacteristic = await this._bikeService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_FUNCTIONS);
-            this._newPrivateKeyCharacteristic = await this._bikeService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_NEW_PRIVATE_KEY);
+            this._challengeCharacteristic = await this._bluetoothDriver.getCharacteristic(this._bikeService, this._bikeProfile.CHARACTERISTIC_CHALLENGE);
+            this._parameterCharacteristic = await this._bluetoothDriver.getCharacteristic(this._bikeService, this._bikeProfile.CHARACTERISTIC_PARAMETERS);
+            this._functionsCharacteristic = await this._bluetoothDriver.getCharacteristic(this._bikeService, this._bikeProfile.CHARACTERISTIC_FUNCTIONS);
+            this._newPrivateKeyCharacteristic = await this._bluetoothDriver.getCharacteristic(this._bikeService, this._bikeProfile.CHARACTERISTIC_NEW_PRIVATE_KEY);
 
             try {
-                this._deviceInfoService = await this._gattServer.getPrimaryService(this._bikeProfile.SERVICE_DEVICE_INFORMATION);
+                this._deviceInfoService = await this._bluetoothDriver.getService(this._gattServer, this._bikeProfile.SERVICE_DEVICE_INFORMATION);
 
-                this._firmwareRevisionCharacteristic = await this._deviceInfoService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_FIRMWARE_REVISION);
-                this._hardwareRevisionCharacteristic = await this._deviceInfoService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_HARDWARE_REVISION);
-                this._softwareRevisionCharacteristic = await this._deviceInfoService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_SOFTWARE_REVISION);
+                this._firmwareRevisionCharacteristic = await this._bluetoothDriver.getCharacteristic(this._deviceInfoService, this._bikeProfile.CHARACTERISTIC_FIRMWARE_REVISION);
+                this._hardwareRevisionCharacteristic = await this._bluetoothDriver.getCharacteristic(this._deviceInfoService, this._bikeProfile.CHARACTERISTIC_HARDWARE_REVISION);
+                this._softwareRevisionCharacteristic = await this._bluetoothDriver.getCharacteristic(this._deviceInfoService, this._bikeProfile.CHARACTERISTIC_SOFTWARE_REVISION);
 
-                this._clientConfigCharacteristic = await this._deviceInfoService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_CLIENT_CONFIG);
-                this._modelNumberCharacteristic = await this._deviceInfoService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_MODEL_NUMBER);
-                this._serialNumberCharacteristic = await this._deviceInfoService.getCharacteristic(this._bikeProfile.CHARACTERISTIC_SERIAL_NUMBER);
+                this._clientConfigCharacteristic = await this._bluetoothDriver.getCharacteristic(this._deviceInfoService, this._bikeProfile.CHARACTERISTIC_CLIENT_CONFIG);
+                this._modelNumberCharacteristic = await this._bluetoothDriver.getCharacteristic(this._deviceInfoService, this._bikeProfile.CHARACTERISTIC_MODEL_NUMBER);
+                this._serialNumberCharacteristic = await this._bluetoothDriver.getCharacteristic(this._deviceInfoService, this._bikeProfile.CHARACTERISTIC_SERIAL_NUMBER);
             } catch (e) {}
 
-            this._parameterCharacteristic.addEventListener('characteristicvaluechanged', (event) => {
-                this._notifier.forEach((callback) => {
-                    callback(this._bikeProfile.createParametersEntity(this._cryptService.decrypt(new Uint8Array(event.target.value.buffer))));
+            await this._bluetoothDriver.subscribeCharacteristic(this._parameterCharacteristic, (buffer) => {
+                this._subscribers.forEach((callback) => {
+                    callback(this._bikeProfile.createParametersEntity(this._cryptService.decrypt(buffer)));
                 });
             });
-            await this._parameterCharacteristic.startNotifications();
-            await this._parameterCharacteristic.readValue();
         }
     }
 
     async reconnect() {
         if(!this.isConnected()) {
-            await this._gattServer.connect();
+            await this._bluetoothDriver.connect(this._gattServer);
             await this._discoverServicesAndCharacteristics();
         }
     }
@@ -82,20 +86,24 @@ export default class {
     disconnect() {
         if(this._gattServer) {
             this._started = false;
-            this._gattServer.disconnect();
+            this._bluetoothDriver.disconnect(this._gattServer);
         }
     }
 
     isConnected() {
-        return (this._gattServer && this._gattServer.connected);
+        return (this._gattServer && this._bluetoothDriver.isConnected(this._gattServer));
     }
 
-    notify(callback) {
-        return this._notifier.push(callback);
+    subscribe(callback) {
+        return this._subscribers.push(callback);
+    }
+
+    unsubscribe(handleIndex) {
+        this._subscribers.splice(handleIndex, 1);
     }
 
     async _read(bluetoothCommand) {
-        let data = new Uint8Array((await bluetoothCommand.getCharacteristic().readValue()).buffer);
+        let data = this._bluetoothDriver.readValue(bluetoothCommand.getCharacteristic());
         if(bluetoothCommand.isEncryptionNeeded()) {
             data = this._cryptService.decrypt(data);
         }
@@ -103,18 +111,18 @@ export default class {
     }
 
     async _write(bluetoothCommand) {
-        let sendData = new Uint8Array(16);
+        let data = new Uint8Array(16);
         if(bluetoothCommand.isChallengeCodeNeeded()) {
-            sendData.set(await this.getChallengeCode(), 0);
+            data.set(await this.getChallengeCode(), 0);
         }
-        sendData.set(bluetoothCommand.getCommand(), 2);
+        data.set(bluetoothCommand.getCommand(), 2);
         if(bluetoothCommand.getData()) {
-            sendData.set(bluetoothCommand.getData(), 3);
+            data.set(bluetoothCommand.getData(), 3);
         }
         if(bluetoothCommand.isEncryptionNeeded()) {
-            sendData = this._cryptService.encrypt(sendData);
+            data = this._cryptService.encrypt(data);
         }
-        return bluetoothCommand.getCharacteristic().writeValue(sendData);
+        return this._bluetoothDriver.writeValue(bluetoothCommand.getCharacteristic(), data);
     }
 
     async getChallengeCode() {

@@ -5,7 +5,7 @@
 [![Open Issues](https://img.shields.io/github/issues-raw/Poket-Jony/vanbike-lib.svg?style=flat&color=yellowgreen)](https://github.com/Poket-Jony/vanbike-lib/issues?q=is%3Aopen+is%3Aissue)
 [![Closed Issues](https://img.shields.io/github/issues-closed-raw/Poket-Jony/vanbike-lib.svg?style=flat&color=brightgreen)](https://github.com/Poket-Jony/vanbike-lib/issues?q=is%3Aissue+is%3Aclosed)
 
-> Access VanMoof Bikes without App
+> Allows direct access to VanMoof Bikes Bluetooth-API in Javascript using the [Web-Bluetooth-API](https://developer.mozilla.org/docs/Web/API/Web_Bluetooth_API).
 
 ## Features
 * Retrieve Parameters (Battery, Distance, Settings, ...)
@@ -25,13 +25,38 @@
 * ...
 
 ## Compatibility
+#### Bikes
 * Electrified S/X 1 (2016/2017) - tested
-* Smart S/X 1 (2018) - not compatible (profile missing)
+* Smart S/X 1 (2018) - unsupported (profile missing)
 * Electrified S/X 2 - untested (some parameters/functions missing)
 * Electrified S/X 3 - untested (some parameters/functions missing)
 
+#### Browsers
+See [full list](https://developer.mozilla.org/docs/Web/API/Web_Bluetooth_API#Browser_compatibility).
+##### Desktop
+* Chrome
+    * Mac: >56
+    * Linux: >56
+    * Windows: >70
+* Edge: >79
+* Firefox: unsupported
+* Internet Explorer: unsupported
+* Opera
+    * Mac: >43
+    * Linux: >43
+    * Windows: >57
+* Safari: unsupported
+##### Mobile
+* Android webview: unsupported
+* Chrome for Android: >56
+* Firefox for Android: unsupported
+* Internet Explorer: unsupported
+* Opera for Android: >43
+* Safari on iOS: unsupported
+* Samsung Internet: >6.0
+
 ## Usage
-### Install
+#### Install
 ```shell script
 # Yarn
 yarn add Poket-Jony/vanbike-lib
@@ -40,7 +65,7 @@ yarn add Poket-Jony/vanbike-lib
 npm i Poket-Jony/vanbike-lib
 ```
 
-### Build Distribution
+#### Build Distribution
 ```shell script
 # Development
 yarn dev
@@ -49,14 +74,14 @@ yarn dev
 yarn prod
 ```
 
-### ES6
+#### ES6
 ```javascript
 import { VanBikeService, ElectrifiedSX1Profile, ModuleStateEntity, LockStateEntity } from 'vanbike-lib';
 const bikeProfile = new ElectrifiedSX1Profile();
 const vanBikeService = new VanBikeService(bikeProfile, 'ENCRYPTION-KEY');
 ```
 
-### Browser
+#### Browser
 ```html
 <script type="text/javascript" src="/dist/vanbike-lib.js"></script>
 ```
@@ -71,7 +96,7 @@ const LockStateEntity = VanBikeLib.LockStateEntity;
 For more examples see `example` folder.
 ```javascript
 // Event listener
-vanBikeService.notify((parameters) => {
+vanBikeService.subscribe((parameters) => {
     console.log(parameters);
 });
 
@@ -102,7 +127,8 @@ vanBikeService.disconnect();
 * `connect() : Promise`
 * `disconnect() : void`
 * `isConnected() : bool`
-* `notify(callback : function) : void`
+* `subscribe(callback : function) : Number`
+* `unsubscribe(handleIndex) : void`
 * `authenticate() : Promise`
 * `setModuleState(ModuleStateEntity moduleState) : Promise`
 * `setLockState(LockStateEntity lockState) : Promise`
@@ -121,7 +147,10 @@ __Todo:__
 * `stopFirmwareUpdate() : Promise`
 
 ## Notice
-### CORS Policy
+This project is not related to VanMoof.
+The guarantee expires with use.
+
+#### CORS Policy
 The `WebService` calls the VanMoof API directly.
 This is probably not possible in Browsers because of [CORS-Policy](https://developer.mozilla.org/docs/Web/HTTP/CORS).
 Use a workaround with the Chrome-Plugin: [Allow CORS: Access-Control-Allow-Origin](https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf).
