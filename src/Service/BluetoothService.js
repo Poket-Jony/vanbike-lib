@@ -1,5 +1,3 @@
-import BluetoothSubscriberEntity from '../Entity/Bluetooth/BluetoothSubscriberEntity';
-
 export default class {
     _bikeProfile;
     _bluetoothDriver;
@@ -60,7 +58,13 @@ export default class {
             for (const subscriberEntity of this._subscribers) {
                 const characteristic = this.getCharacteristic(subscriberEntity.getServiceUuid(), subscriberEntity.getCharacteristicUuid());
                 if(characteristic) {
-                    await this._bluetoothDriver.subscribeCharacteristic(characteristic, subscriberEntity.getCallback());
+                    await this._bluetoothDriver.subscribeCharacteristic(characteristic, (buffer) => {
+                        if(subscriberEntity.isEncryptionNeeded()) {
+                            subscriberEntity.getCallback()(this._cryptService.decrypt(buffer));
+                        } else {
+                            subscriberEntity.getCallback()(buffer);
+                        }
+                    });
                 }
             }
         }
@@ -92,8 +96,8 @@ export default class {
         return (this._gattServer && this._bluetoothDriver.isConnected(this._gattServer));
     }
 
-    subscribe(serviceUuid, characteristicUuid, callback) {
-        return this._subscribers.push(new BluetoothSubscriberEntity(serviceUuid, characteristicUuid, callback));
+    subscribe(bluetoothSubscriber) {
+        return this._subscribers.push(bluetoothSubscriber);
     }
 
     unsubscribe(handleIndex) {
@@ -122,10 +126,12 @@ export default class {
         let data = new Uint8Array(16);
         if(bluetoothCommand.isChallengeCodeNeeded()) {
             data.set(await this.getChallengeCode(), 0);
-        }
-        data.set(bluetoothCommand.getCommand(), 2);
-        if(bluetoothCommand.getData()) {
-            data.set(bluetoothCommand.getData(), 3);
+            data.set(bluetoothCommand.getCommand(), 2);
+            if(bluetoothCommand.getData()) {
+                data.set(bluetoothCommand.getData(), 3);
+            }
+        } else if(bluetoothCommand.getData()) {
+            data.set(bluetoothCommand.getData(), 0);
         }
         if(bluetoothCommand.isEncryptionNeeded()) {
             data = this._cryptService.encrypt(data);
@@ -135,6 +141,9 @@ export default class {
 
     async getChallengeCode() {
         const command = this._bikeProfile.createChallengeCodeCommandEntity();
+        if(!command) {
+            throw Error('Command not found');
+        }
         return this.read(command);
     }
 };

@@ -2,11 +2,13 @@ export default class {
     serviceUuid;
     characteristicUuid;
     callback;
+    useEncryption;
 
-    constructor(serviceUuid, characteristicUuid, callback) {
+    constructor(serviceUuid, characteristicUuid, callback, useEncryption = true) {
         this.serviceUuid = serviceUuid;
         this.characteristicUuid = characteristicUuid;
         this.callback = callback;
+        this.useEncryption = useEncryption;
     }
 
     getServiceUuid() {
@@ -19,5 +21,9 @@ export default class {
 
     getCallback() {
         return this.callback;
+    }
+
+    isEncryptionNeeded() {
+        return this.useEncryption;
     }
 };

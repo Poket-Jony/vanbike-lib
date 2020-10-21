@@ -1,6 +1,7 @@
 import BluetoothReadCommandEntity from '../Entity/Bluetooth/BluetoothReadCommandEntity';
 import BluetoothWriteCommandEntity from '../Entity/Bluetooth/BluetoothWriteCommandEntity';
 import BluetoothConfigEntity from '../Entity/Bluetooth/BluetoothConfigEntity';
+import BluetoothSubscriberEntity from '../Entity/Bluetooth/BluetoothSubscriberEntity';
 import ParametersEntity from '../Entity/ParametersEntity';
 import ModuleStateEntity from '../Entity/ModuleStateEntity';
 import BatteryStateEntity from '../Entity/BatteryStateEntity';
@@ -53,6 +54,7 @@ export default class {
             this.CHARACTERISTIC_FUNCTIONS,
             this.CHARACTERISTIC_PARAMETERS,
         ];
+
         const optionalServicesAndCharacteristics = {};
         optionalServicesAndCharacteristics[this.SERVICE_DEVICE_INFORMATION] = [
             this.CHARACTERISTIC_FIRMWARE_REVISION,
@@ -68,6 +70,12 @@ export default class {
             this.CHARACTERISTIC_IMAGE_STATUS,
         ];
         return new BluetoothConfigEntity(primaryServicesAndCharacteristics, optionalServicesAndCharacteristics);
+    }
+
+    createBluetoothSubscriberEntity(callback) {
+        return new BluetoothSubscriberEntity(this.SERVICE_BIKE, this.CHARACTERISTIC_PARAMETERS, (buffer) => {
+            callback(this.createParametersEntity(buffer));
+        });
     }
 
     createParametersEntity(parametersData) {
@@ -98,7 +106,7 @@ export default class {
     }
 
     createAuthenticateCommandEntity(passcode) {
-        return new BluetoothWriteCommandEntity(this.COMMAND_SET_PASSCODE, passcode)
+        return (new BluetoothWriteCommandEntity(this.COMMAND_SET_PASSCODE, passcode))
             .setServiceUuid(this.SERVICE_BIKE)
             .setCharacteristicUuid(this.CHARACTERISTIC_FUNCTIONS)
         ;

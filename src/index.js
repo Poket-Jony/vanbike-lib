@@ -11,6 +11,7 @@ import WebService from './Service/WebService';
 import ElectrifiedSX1Profile from './Profile/ElectrifiedSX1Profile';
 import ElectrifiedSX2Profile from './Profile/ElectrifiedSX2Profile';
 import ElectrifiedSX3Profile from './Profile/ElectrifiedSX3Profile';
+import SmartSX1Profile from './Profile/SmartSX1Profile';
 
 // Entities
 import BluetoothReadCommandEntity from './Entity/Bluetooth/BluetoothReadCommandEntity';
@@ -45,6 +46,7 @@ export {
     ElectrifiedSX1Profile,
     ElectrifiedSX2Profile,
     ElectrifiedSX3Profile,
+    SmartSX1Profile,
 
     // Entities
     BluetoothReadCommandEntity,
