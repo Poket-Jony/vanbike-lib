@@ -1,5 +1,4 @@
-import ParametersEntity from '../Entity/ParametersEntity';
-import BluetoothReadCommandEntity from '../Entity/Bluetooth/BluetoothReadCommandEntity';
+import BluetoothSubscriberEntity from '../Entity/Bluetooth/BluetoothSubscriberEntity';
 
 export default class {
     _bikeProfile;
@@ -7,18 +6,8 @@ export default class {
     _cryptService;
     _device;
     _gattServer;
-    _bikeService;
-    _deviceInfoService;
-    _challengeCharacteristic;
-    _parameterCharacteristic;
-    _functionsCharacteristic;
-    _newPrivateKeyCharacteristic;
-    _firmwareRevisionCharacteristic;
-    _hardwareRevisionCharacteristic;
-    _softwareRevisionCharacteristic;
-    _clientConfigCharacteristic;
-    _modelNumberCharacteristic;
-    _serialNumberCharacteristic;
+    _config;
+    _servicesAndCharacteristics = {};
     _subscribers = [];
     _started = false;
 
@@ -26,6 +15,7 @@ export default class {
         this._bikeProfile = bikeProfile;
         this._bluetoothDriver = bluetoothDriver;
         this._cryptService = crypt;
+        this._config = bikeProfile.createBluetoothConfigEntity();
     }
 
     async connect() {
@@ -33,8 +23,8 @@ export default class {
             throw new Error('Bluetooth driver not available');
         }
         this._device = await this._bluetoothDriver.getDevice(
-            [this._bikeProfile.SERVICE_BIKE],
-            [this._bikeProfile.SERVICE_DEVICE_INFORMATION]
+            Object.keys(this._config.getPrimaryServicesAndCharacteristics()),
+            Object.keys(this._config.getOptionalServicesAndCharacteristics())
         );
         await this._bluetoothDriver.subscribeDeviceDisconnect(this._device, async () => {
             if(this._started) {
@@ -49,31 +39,39 @@ export default class {
 
     async _discoverServicesAndCharacteristics() {
         if(this.isConnected()) {
-            this._bikeService = await this._bluetoothDriver.getService(this._gattServer, this._bikeProfile.SERVICE_BIKE);
+            this._servicesAndCharacteristics = {};
+            for (const serviceUuid of Object.keys(this._config.getAllServicesAndCharacteristics())) {
+                const characteristicUuids = this._config.getAllServicesAndCharacteristics()[serviceUuid];
+                try {
+                    const service = await this._bluetoothDriver.getService(this._gattServer, serviceUuid);
+                    const characteristics = {};
+                    for(const characteristicUuid of characteristicUuids) {
+                        try {
+                            characteristics[characteristicUuid] = await this._bluetoothDriver.getCharacteristic(service, characteristicUuid);
+                        } catch (e) {}
+                    }
+                    this._servicesAndCharacteristics[serviceUuid] = {
+                        service: service,
+                        characteristics: characteristics,
+                    };
+                } catch (e) {}
+            }
 
-            this._challengeCharacteristic = await this._bluetoothDriver.getCharacteristic(this._bikeService, this._bikeProfile.CHARACTERISTIC_CHALLENGE);
-            this._parameterCharacteristic = await this._bluetoothDriver.getCharacteristic(this._bikeService, this._bikeProfile.CHARACTERISTIC_PARAMETERS);
-            this._functionsCharacteristic = await this._bluetoothDriver.getCharacteristic(this._bikeService, this._bikeProfile.CHARACTERISTIC_FUNCTIONS);
-            this._newPrivateKeyCharacteristic = await this._bluetoothDriver.getCharacteristic(this._bikeService, this._bikeProfile.CHARACTERISTIC_NEW_PRIVATE_KEY);
-
-            try {
-                this._deviceInfoService = await this._bluetoothDriver.getService(this._gattServer, this._bikeProfile.SERVICE_DEVICE_INFORMATION);
-
-                this._firmwareRevisionCharacteristic = await this._bluetoothDriver.getCharacteristic(this._deviceInfoService, this._bikeProfile.CHARACTERISTIC_FIRMWARE_REVISION);
-                this._hardwareRevisionCharacteristic = await this._bluetoothDriver.getCharacteristic(this._deviceInfoService, this._bikeProfile.CHARACTERISTIC_HARDWARE_REVISION);
-                this._softwareRevisionCharacteristic = await this._bluetoothDriver.getCharacteristic(this._deviceInfoService, this._bikeProfile.CHARACTERISTIC_SOFTWARE_REVISION);
-
-                this._clientConfigCharacteristic = await this._bluetoothDriver.getCharacteristic(this._deviceInfoService, this._bikeProfile.CHARACTERISTIC_CLIENT_CONFIG);
-                this._modelNumberCharacteristic = await this._bluetoothDriver.getCharacteristic(this._deviceInfoService, this._bikeProfile.CHARACTERISTIC_MODEL_NUMBER);
-                this._serialNumberCharacteristic = await this._bluetoothDriver.getCharacteristic(this._deviceInfoService, this._bikeProfile.CHARACTERISTIC_SERIAL_NUMBER);
-            } catch (e) {}
-
-            await this._bluetoothDriver.subscribeCharacteristic(this._parameterCharacteristic, (buffer) => {
-                this._subscribers.forEach((callback) => {
-                    callback(this._bikeProfile.createParametersEntity(this._cryptService.decrypt(buffer)));
-                });
-            });
+            for (const subscriberEntity of this._subscribers) {
+                const characteristic = this.getCharacteristic(subscriberEntity.getServiceUuid(), subscriberEntity.getCharacteristicUuid());
+                if(characteristic) {
+                    await this._bluetoothDriver.subscribeCharacteristic(characteristic, subscriberEntity.getCallback());
+                }
+            }
         }
+    }
+
+    getService(serviceUuid) {
+        return this._servicesAndCharacteristics[serviceUuid] ? this._servicesAndCharacteristics[serviceUuid].service : undefined;
+    }
+
+    getCharacteristic(serviceUuid, characteristicUuid) {
+        return this._servicesAndCharacteristics[serviceUuid] ? this._servicesAndCharacteristics[serviceUuid].characteristics[characteristicUuid] : undefined;
     }
 
     async reconnect() {
@@ -94,23 +92,33 @@ export default class {
         return (this._gattServer && this._bluetoothDriver.isConnected(this._gattServer));
     }
 
-    subscribe(callback) {
-        return this._subscribers.push(callback);
+    subscribe(serviceUuid, characteristicUuid, callback) {
+        return this._subscribers.push(new BluetoothSubscriberEntity(serviceUuid, characteristicUuid, callback));
     }
 
     unsubscribe(handleIndex) {
         this._subscribers.splice(handleIndex, 1);
     }
 
-    async _read(bluetoothCommand) {
-        let data = this._bluetoothDriver.readValue(bluetoothCommand.getCharacteristic());
+    async read(bluetoothCommand) {
+        const characteristic = this.getCharacteristic(bluetoothCommand.getServiceUuid(), bluetoothCommand.getCharacteristicUuid());
+        if(!characteristic) {
+            throw new Error('Characteristic "' + bluetoothCommand.getCharacteristicUuid() + '" not found');
+        }
+
+        let data = this._bluetoothDriver.readValue(characteristic);
         if(bluetoothCommand.isEncryptionNeeded()) {
             data = this._cryptService.decrypt(data);
         }
         return data;
     }
 
-    async _write(bluetoothCommand) {
+    async write(bluetoothCommand) {
+        const characteristic = this.getCharacteristic(bluetoothCommand.getServiceUuid(), bluetoothCommand.getCharacteristicUuid());
+        if(!characteristic) {
+            throw new Error('Characteristic "' + bluetoothCommand.getCharacteristicUuid() + '" not found');
+        }
+
         let data = new Uint8Array(16);
         if(bluetoothCommand.isChallengeCodeNeeded()) {
             data.set(await this.getChallengeCode(), 0);
@@ -122,46 +130,11 @@ export default class {
         if(bluetoothCommand.isEncryptionNeeded()) {
             data = this._cryptService.encrypt(data);
         }
-        return this._bluetoothDriver.writeValue(bluetoothCommand.getCharacteristic(), data);
+        return this._bluetoothDriver.writeValue(characteristic, data);
     }
 
     async getChallengeCode() {
-        const command = (new BluetoothReadCommandEntity(false)).setService(this._bikeService).setCharacteristic(this._challengeCharacteristic);
-        return this._read(command);
-    }
-
-    async getParameters() {
-        const command = (new BluetoothReadCommandEntity()).setService(this._bikeService).setCharacteristic(this._parameterCharacteristic);
-        return this._bikeProfile.createParametersEntity(await this._read(command));
-    }
-
-    async sendFunction(bluetoothCommand) {
-        const command = bluetoothCommand.setService(this._bikeService).setCharacteristic(this._functionsCharacteristic);
-        return this._write(command);
-    }
-
-    async getFirmwareRevision() {
-        const command = (new BluetoothReadCommandEntity(false)).setService(this._deviceInfoService).setCharacteristic(this._firmwareRevisionCharacteristic);
-        return this._cryptService.getUtils().utf8.fromBytes(await this._read(command));
-    }
-
-    async getHardwareRevision() {
-        const command = (new BluetoothReadCommandEntity(false)).setService(this._deviceInfoService).setCharacteristic(this._hardwareRevisionCharacteristic);
-        return this._cryptService.getUtils().utf8.fromBytes(await this._read(command));
-    }
-
-    async getSoftwareRevision() {
-        const command = (new BluetoothReadCommandEntity(false)).setService(this._deviceInfoService).setCharacteristic(this._softwareRevisionCharacteristic);
-        return this._cryptService.getUtils().utf8.fromBytes(await this._read(command));
-    }
-
-    async getModelNumber() {
-        const command = (new BluetoothReadCommandEntity(false)).setService(this._deviceInfoService).setCharacteristic(this._modelNumberCharacteristic);
-        return this._cryptService.getUtils().utf8.fromBytes(await this._read(command));
-    }
-
-    async getSerialNumber() {
-        const command = (new BluetoothReadCommandEntity(false)).setService(this._deviceInfoService).setCharacteristic(this._serialNumberCharacteristic);
-        return this._cryptService.getUtils().utf8.fromBytes(await this._read(command));
+        const command = this._bikeProfile.createChallengeCodeCommandEntity();
+        return this.read(command);
     }
 };

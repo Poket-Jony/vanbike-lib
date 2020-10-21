@@ -5,9 +5,9 @@ export default class {
         return (navigator && navigator.bluetooth && await navigator.bluetooth.getAvailability());
     }
 
-    async getDevice(serviceUuids, optionalServiceUuids = []) {
+    async getDevice(primaryServiceUuids, optionalServiceUuids = []) {
         return navigator.bluetooth.requestDevice({
-            filters: [{services: serviceUuids}],
+            filters: [{services: primaryServiceUuids}],
             optionalServices: optionalServiceUuids,
         });
     }

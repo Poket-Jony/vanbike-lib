@@ -55,7 +55,7 @@
 
     document.querySelector('#getFirmwareRevision').addEventListener('click', async () => {
         // Retrieve Firmware Revision
-        console.log('Firmware Revision: ' + await vanBikeService.getBluetoothService().getFirmwareRevision());
+        console.log('Firmware Revision: ' + await vanBikeService.getFirmwareRevision());
     });
 
 

@@ -1,3 +1,6 @@
+import BluetoothReadCommandEntity from '../Entity/Bluetooth/BluetoothReadCommandEntity';
+import BluetoothWriteCommandEntity from '../Entity/Bluetooth/BluetoothWriteCommandEntity';
+import BluetoothConfigEntity from '../Entity/Bluetooth/BluetoothConfigEntity';
 import ParametersEntity from '../Entity/ParametersEntity';
 import ModuleStateEntity from '../Entity/ModuleStateEntity';
 import BatteryStateEntity from '../Entity/BatteryStateEntity';
@@ -16,7 +19,6 @@ export default class {
     CHARACTERISTIC_PARAMETERS = '8e7f1a54-087a-44c9-b292-a2c628fdd9aa';
 
     SERVICE_DEVICE_INFORMATION = '0000180a-0000-1000-8000-00805f9b34fb';
-    CHARACTERISTIC_CLIENT_CONFIG = '00002902-0000-1000-8000-00805f9b34fb';
     CHARACTERISTIC_FIRMWARE_REVISION = '00002a26-0000-1000-8000-00805f9b34fb';
     CHARACTERISTIC_HARDWARE_REVISION = '00002a27-0000-1000-8000-00805f9b34fb';
     CHARACTERISTIC_SOFTWARE_REVISION = '00002a28-0000-1000-8000-00805f9b34fb';
@@ -43,6 +45,31 @@ export default class {
     COMMAND_SET_OFFROAD_MODE = new Uint8Array([12]);
     COMMAND_FIRMWARE_UPDATE = new Uint8Array([13]);
 
+    createBluetoothConfigEntity() {
+        const primaryServicesAndCharacteristics = {};
+        primaryServicesAndCharacteristics[this.SERVICE_BIKE] = [
+            this.CHARACTERISTIC_CHALLENGE,
+            this.CHARACTERISTIC_NEW_PRIVATE_KEY,
+            this.CHARACTERISTIC_FUNCTIONS,
+            this.CHARACTERISTIC_PARAMETERS,
+        ];
+        const optionalServicesAndCharacteristics = {};
+        optionalServicesAndCharacteristics[this.SERVICE_DEVICE_INFORMATION] = [
+            this.CHARACTERISTIC_FIRMWARE_REVISION,
+            this.CHARACTERISTIC_HARDWARE_REVISION,
+            this.CHARACTERISTIC_SOFTWARE_REVISION,
+            this.CHARACTERISTIC_MODEL_NUMBER,
+            this.CHARACTERISTIC_SERIAL_NUMBER,
+        ];
+        optionalServicesAndCharacteristics[this.SERVICE_OAD] = [
+            this.CHARACTERISTIC_IMAGE_BLOCK,
+            this.CHARACTERISTIC_IMAGE_COUNT,
+            this.CHARACTERISTIC_IMAGE_IDENTIFY,
+            this.CHARACTERISTIC_IMAGE_STATUS,
+        ];
+        return new BluetoothConfigEntity(primaryServicesAndCharacteristics, optionalServicesAndCharacteristics);
+    }
+
     createParametersEntity(parametersData) {
         const moduleState = new ModuleStateEntity();
         moduleState.setState(parametersData[2] === 1 ? moduleState.STATE_ON : moduleState.STATE_STANDBY);
@@ -60,6 +87,146 @@ export default class {
             .setDistance(parametersData[11] + (parametersData[12] << 8) + (parametersData[13] << 16) + (parametersData[14] << 24))
             .setErrorCode(new ErrorCodeStateEntity((parametersData[15] & 248) >> 3))
             .setRunMode(new RunModeStateEntity(parametersData[15] & 7))
+        ;
+    }
+
+    createChallengeCodeCommandEntity() {
+        return (new BluetoothReadCommandEntity(false))
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_CHALLENGE)
+        ;
+    }
+
+    createAuthenticateCommandEntity(passcode) {
+        return new BluetoothWriteCommandEntity(this.COMMAND_SET_PASSCODE, passcode)
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_FUNCTIONS)
+        ;
+    }
+
+    createParametersCommandEntity() {
+        return (new BluetoothReadCommandEntity(true))
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_PARAMETERS)
+        ;
+    }
+
+    createFirmwareRevisionCommandEntity() {
+        return (new BluetoothReadCommandEntity(false))
+            .setServiceUuid(this.SERVICE_DEVICE_INFORMATION)
+            .setCharacteristicUuid(this.CHARACTERISTIC_FIRMWARE_REVISION)
+        ;
+    }
+
+    createHardwareRevisionCommandEntity() {
+        return (new BluetoothReadCommandEntity(false))
+            .setServiceUuid(this.SERVICE_DEVICE_INFORMATION)
+            .setCharacteristicUuid(this.CHARACTERISTIC_HARDWARE_REVISION)
+        ;
+    }
+
+    createSoftwareRevisionCommandEntity() {
+        return (new BluetoothReadCommandEntity(false))
+            .setServiceUuid(this.SERVICE_DEVICE_INFORMATION)
+            .setCharacteristicUuid(this.CHARACTERISTIC_SOFTWARE_REVISION)
+        ;
+    }
+
+    createModelNumberCommandEntity() {
+        return (new BluetoothReadCommandEntity(false))
+            .setServiceUuid(this.SERVICE_DEVICE_INFORMATION)
+            .setCharacteristicUuid(this.CHARACTERISTIC_MODEL_NUMBER)
+        ;
+    }
+
+    createSerialNumberCommandEntity() {
+        return (new BluetoothReadCommandEntity(false))
+            .setServiceUuid(this.SERVICE_DEVICE_INFORMATION)
+            .setCharacteristicUuid(this.CHARACTERISTIC_SERIAL_NUMBER)
+        ;
+    }
+
+    createSetModuleStateCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(this.COMMAND_SET_MODULE_STATE, data))
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_FUNCTIONS)
+        ;
+    }
+
+    createSetLockStateCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(this.COMMAND_SET_LOCK_STATE, data))
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_FUNCTIONS)
+        ;
+    }
+
+    createSetLightningStateCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(this.COMMAND_SET_LIGHTNING_STATE, data))
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_FUNCTIONS)
+        ;
+    }
+
+    createSetPowerLevelStateCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(this.COMMAND_SET_POWER_LEVEL_STATE, data))
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_FUNCTIONS)
+        ;
+    }
+
+    createSetUnitStateCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(this.COMMAND_SET_UNIT_STATE, data))
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_FUNCTIONS)
+        ;
+    }
+
+    createShowFirmwareCommandEntity() {
+        return (new BluetoothWriteCommandEntity(this.COMMAND_SHOW_FIRMWARE))
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_FUNCTIONS)
+        ;
+    }
+
+    createResetDistanceCommandEntity() {
+        return (new BluetoothWriteCommandEntity(this.COMMAND_RESET_DISTANCE))
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_FUNCTIONS)
+        ;
+    }
+
+    createPairRemoteCommandEntity() {
+        return (new BluetoothWriteCommandEntity(this.COMMAND_PAIR_REMOTE))
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_FUNCTIONS)
+        ;
+    }
+
+    createEnableErrorsCommandEntity() {
+        return (new BluetoothWriteCommandEntity(this.COMMAND_ENABLE_ERRORS))
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_FUNCTIONS)
+        ;
+    }
+
+    createDisableErrorsCommandEntity() {
+        return (new BluetoothWriteCommandEntity(this.COMMAND_DISABLE_ERRORS))
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_FUNCTIONS)
+        ;
+    }
+
+    createSetOffroadModeCommandEntity() {
+        return (new BluetoothWriteCommandEntity(this.COMMAND_SET_OFFROAD_MODE))
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_FUNCTIONS)
+        ;
+    }
+
+    createFirmwareUpdateCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(this.COMMAND_FIRMWARE_UPDATE, data))
+            .setServiceUuid(this.SERVICE_BIKE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_FUNCTIONS)
         ;
     }
 };

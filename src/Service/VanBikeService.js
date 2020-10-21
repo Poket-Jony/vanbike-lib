@@ -1,6 +1,5 @@
 import CryptService from './CryptService';
 import BluetoothService from './BluetoothService';
-import BluetoothWriteCommandEntity from '../Entity/Bluetooth/BluetoothWriteCommandEntity';
 import WebBluetoothDriver from '../Driver/WebBluetoothDriver';
 
 export default class {
@@ -18,10 +17,6 @@ export default class {
         );
     }
 
-    getBluetoothService() {
-        return this._bluetoothService;
-    }
-
     async connect() {
         await this._bluetoothService.connect();
     }
@@ -35,7 +30,9 @@ export default class {
     }
 
     subscribe(callback) {
-        return this._bluetoothService.subscribe(callback);
+        return this._bluetoothService.subscribe(this._bikeProfile.SERVICE_BIKE, this._bikeProfile.CHARACTERISTIC_PARAMETERS, (buffer) => {
+            callback(this._bikeProfile.createParametersEntity(this._cryptService.decrypt(buffer)));
+        });
     }
 
     unsubscribe(handleIndex) {
@@ -43,71 +40,101 @@ export default class {
     }
 
     async authenticate() {
-        const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_SET_PASSCODE, this._cryptService.getPasscode());
-        return this._bluetoothService.sendFunction(command);
+        const command = this._bikeProfile.createAuthenticateCommandEntity(this._cryptService.getPasscode());
+        return this._bluetoothService.write(command);
+    }
+
+    async getParameters() {
+        const command = this._bikeProfile.createParametersCommandEntity();
+        return this._bikeProfile.createParametersEntity(await this._bluetoothService.read(command));
+    }
+
+    async getFirmwareRevision() {
+        const command = this._bikeProfile.createFirmwareRevisionCommandEntity();
+        return this._cryptService.getUtils().utf8.fromBytes(await this._bluetoothService.read(command));
+    }
+
+    async getHardwareRevision() {
+        const command = this._bikeProfile.createHardwareRevisionCommandEntity();
+        return this._cryptService.getUtils().utf8.fromBytes(await this._bluetoothService.read(command));
+    }
+
+    async getSoftwareRevision() {
+        const command = this._bikeProfile.createSoftwareRevisionCommandEntity();
+        return this._cryptService.getUtils().utf8.fromBytes(await this._bluetoothService.read(command));
+    }
+
+    async getModelNumber() {
+        const command = this._bikeProfile.createModelNumberCommandEntity();
+        return this._cryptService.getUtils().utf8.fromBytes(await this._bluetoothService.read(command));
+    }
+
+    async getSerialNumber() {
+        const command = this._bikeProfile.createSerialNumberCommandEntity();
+        return this._cryptService.getUtils().utf8.fromBytes(await this._bluetoothService.read(command));
     }
 
     async setModuleState(moduleState) {
-        const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_SET_MODULE_STATE, moduleState.getState());
-        return this._bluetoothService.sendFunction(command);
+        const command = this._bikeProfile.createSetModuleStateCommandEntity(moduleState.getState());
+        return this._bluetoothService.write(command);
     }
 
     async setLockState(lockState) {
-        const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_SET_LOCK_STATE, lockState.getState());
-        return this._bluetoothService.sendFunction(command);
+        const command = this._bikeProfile.createSetLockStateCommandEntity(lockState.getState());
+        return this._bluetoothService.write(command);
     }
 
     async setLightningState(lightningState) {
         const data = new Uint8Array([lightningState.getState(), 0]);
-        const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_SET_LIGHTNING_STATE, data);
-        return this._bluetoothService.sendFunction(command);
+        const command = this._bikeProfile.createSetLightningStateCommandEntity(data);
+        return this._bluetoothService.write(command);
     }
 
     async setPowerLevelState(powerLevelState, regionState) {
         const data = new Uint8Array([powerLevelState.getState(), regionState.getState()]);
-        const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_SET_POWER_LEVEL_STATE, data);
-        return this._bluetoothService.sendFunction(command);
+        const command = this._bikeProfile.createSetPowerLevelStateCommandEntity(data);
+        return this._bluetoothService.write(command);
     }
 
     async setUnitState(unitState) {
-        const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_SET_UNIT_STATE, unitState.getState());
-        return this._bluetoothService.sendFunction(command);
+        const command = this._bikeProfile.createSetUnitStateCommandEntity(unitState.getState());
+        return this._bluetoothService.write(command);
     }
 
     async showFirmware() {
-        const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_SHOW_FIRMWARE);
-        return this._bluetoothService.sendFunction(command);
+        const command = this._bikeProfile.createShowFirmwareCommandEntity();
+        return this._bluetoothService.write(command);
     }
 
     async resetDistance() {
-        const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_RESET_DISTANCE);
-        return this._bluetoothService.sendFunction(command);
+        const command = this._bikeProfile.createResetDistanceCommandEntity();
+        return this._bluetoothService.write(command);
     }
 
     async pairRemote() {
-        const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_PAIR_REMOTE);
-        return this._bluetoothService.sendFunction(command);
+        const command = this._bikeProfile.createPairRemoteCommandEntity();
+        return this._bluetoothService.write(command);
     }
 
     async enableErrors() {
-        const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_ENABLE_ERRORS);
-        return this._bluetoothService.sendFunction(command);
+        const command = this._bikeProfile.createEnableErrorsCommandEntity();
+        return this._bluetoothService.write(command);
     }
 
     async disableErrors() {
-        const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_DISABLE_ERRORS);
-        return this._bluetoothService.sendFunction(command);
+        const command = this._bikeProfile.createDisableErrorsCommandEntity();
+        return this._bluetoothService.write(command);
     }
 
     async setOffroadMode() {
-        const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_SET_OFFROAD_MODE);
-        return this._bluetoothService.sendFunction(command);
+        const command = this._bikeProfile.createSetOffroadModeCommandEntity();
+        return this._bluetoothService.write(command);
     }
 
     async startFirmwareUpdate(firmwareFile) {
         //@todo
-        const command = new BluetoothWriteCommandEntity(this._bikeProfile.COMMAND_FIRMWARE_UPDATE, new Uint8Array([1]));
-        return this._bluetoothService.sendFunction(command);
+        const command = this._bikeProfile.createFirmwareUpdateCommandEntity(new Uint8Array([1]));
+        return this._bluetoothService.write(command);
     }
 
     async stopFirmwareUpdate() {

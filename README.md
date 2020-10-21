@@ -125,28 +125,33 @@ vanBikeService.disconnect();
 ## Documentation
 #### VanBikeService
 * `constructor(encryptionKey : string) : void`
-* `getBluetoothService() : BluetoothService`
-* `connect() : Promise`
+* `async connect() : Promise`
 * `disconnect() : void`
 * `isConnected() : bool`
-* `subscribe(callback : function) : Number`
+* `subscribe(function callback) : Number`
 * `unsubscribe(handleIndex) : void`
-* `authenticate() : Promise`
-* `setModuleState(ModuleStateEntity moduleState) : Promise`
-* `setLockState(LockStateEntity lockState) : Promise`
-* `setLightningState(LightningStateEntity lightningState) : Promise`
-* `setPowerLevelState(PowerStateEntity powerState, RegionStateEntity regionState) : Promise`
-* `setUnitState(UnitStateEntity unitState) : Promise`
-* `showFirmware() : Promise`
-* `resetDistance() : Promise`
-* `pairRemote() : Promise`
-* `enableErrors() : Promise`
-* `disableErrors() : Promise`
-* `setOffroadMode() : Promise`
+* `async authenticate() : Promise`
+* `async getParameters() : ParametersEntity`
+* `async getFirmwareRevision() : string`
+* `async getHardwareRevision() : string`
+* `async getSoftwareRevision() : string`
+* `async getModelNumber() : string`
+* `async getSerialNumber() : string`
+* `async setModuleState(ModuleStateEntity moduleState) : Promise`
+* `async setLockState(LockStateEntity lockState) : Promise`
+* `async setLightningState(LightningStateEntity lightningState) : Promise`
+* `async setPowerLevelState(PowerStateEntity powerState, RegionStateEntity regionState) : Promise`
+* `async setUnitState(UnitStateEntity unitState) : Promise`
+* `async showFirmware() : Promise`
+* `async resetDistance() : Promise`
+* `async pairRemote() : Promise`
+* `async enableErrors() : Promise`
+* `async disableErrors() : Promise`
+* `async setOffroadMode() : Promise`
 
 __Todo:__
-* `startFirmwareUpdate(FirmwareEntity firmware) : Promise`
-* `stopFirmwareUpdate() : Promise`
+* `async startFirmwareUpdate(FirmwareEntity firmware) : Promise`
+* `async stopFirmwareUpdate() : Promise`
 
 ## Notice
 This project is not related to VanMoof.

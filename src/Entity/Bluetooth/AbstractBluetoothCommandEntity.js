@@ -1,23 +1,23 @@
 export default class {
-    service;
-    characteristic;
+    serviceUuid;
+    characteristicUuid;
     useEncryption;
 
-    getService() {
-        return this.service;
+    getServiceUuid() {
+        return this.serviceUuid;
     }
 
-    setService(service) {
-        this.service = service;
+    setServiceUuid(serviceUuid) {
+        this.serviceUuid = serviceUuid;
         return this;
     }
 
-    getCharacteristic() {
-        return this.characteristic;
+    getCharacteristicUuid() {
+        return this.characteristicUuid;
     }
 
-    setCharacteristic(characteristic) {
-        this.characteristic = characteristic;
+    setCharacteristicUuid(characteristicUuid) {
+        this.characteristicUuid = characteristicUuid;
         return this;
     }
 

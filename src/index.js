@@ -15,6 +15,8 @@ import ElectrifiedSX3Profile from './Profile/ElectrifiedSX3Profile';
 // Entities
 import BluetoothReadCommandEntity from './Entity/Bluetooth/BluetoothReadCommandEntity';
 import BluetoothWriteCommandEntity from './Entity/Bluetooth/BluetoothWriteCommandEntity';
+import BluetoothConfigEntity from './Entity/Bluetooth/BluetoothConfigEntity';
+import BluetoothSubscriberEntity from './Entity/Bluetooth/BluetoothSubscriberEntity';
 import ParametersEntity from './Entity/ParametersEntity';
 import BatteryStateEntity from './Entity/BatteryStateEntity';
 import ErrorCodeStateEntity from './Entity/ErrorCodeStateEntity';
@@ -47,6 +49,8 @@ export {
     // Entities
     BluetoothReadCommandEntity,
     BluetoothWriteCommandEntity,
+    BluetoothConfigEntity,
+    BluetoothSubscriberEntity,
     ParametersEntity,
     BatteryStateEntity,
     ErrorCodeStateEntity,
