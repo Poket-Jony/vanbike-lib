@@ -1,7 +1,7 @@
 # VanBike-Library
 [![Latest Release](https://img.shields.io/github/release/Poket-Jony/vanbike-lib.svg?style=flat&color=blue)](https://github.com/Poket-Jony/vanbike-lib/releases/latest)
 [![GitHub stars](https://img.shields.io/github/stars/Poket-Jony/vanbike-lib?style=flat&color=brightgreen)](https://github.com/Poket-Jony/vanbike-lib/stargazers)
-[![Downloads](https://img.shields.io/github/downloads/Poket-Jony/vanbike-lib/total.svg?style=flat&color=brightgreen)](https://github.com/Poket-Jony/vanbike-lib/releases/latest)
+[![Downloads](https://img.shields.io/npm/dt/vanbike-lib?color=brightgreen)](https://github.com/Poket-Jony/vanbike-lib/releases/latest)
 [![Open Issues](https://img.shields.io/github/issues-raw/Poket-Jony/vanbike-lib.svg?style=flat&color=yellowgreen)](https://github.com/Poket-Jony/vanbike-lib/issues?q=is%3Aopen+is%3Aissue)
 [![Closed Issues](https://img.shields.io/github/issues-closed-raw/Poket-Jony/vanbike-lib.svg?style=flat&color=brightgreen)](https://github.com/Poket-Jony/vanbike-lib/issues?q=is%3Aissue+is%3Aclosed)
 
