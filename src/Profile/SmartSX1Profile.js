@@ -13,6 +13,8 @@ import UnitStateEntity from '../Entity/UnitStateEntity';
 import RunModeStateEntity from '../Entity/RunModeStateEntity';
 
 export default class {
+    PASSCODE_LENGTH = 12;
+
     SERVICE_BIKE = 'F0005500-0451-4000-B000-000000000000';
 
     SERVICE_SECURITY = '6ACB5520-E631-4069-944D-B8CA7598AD50';
@@ -120,7 +122,7 @@ export default class {
     }
 
     createAuthenticateCommandEntity(passcode) {
-        return (new BluetoothWriteCommandEntity(undefined, passcode, true, false))
+        return (new BluetoothWriteCommandEntity(undefined, passcode, true, true))
             .setServiceUuid(this.SERVICE_SECURITY)
             .setCharacteristicUuid(this.CHARACTERISTIC_PASSCODE)
         ;
@@ -151,17 +153,14 @@ export default class {
     }
 
     createSetModuleStateCommandEntity(data) {
-        return (new BluetoothWriteCommandEntity(undefined, data, true, false))
+        return (new BluetoothWriteCommandEntity(undefined, data, true, true))
             .setServiceUuid(this.SERVICE_SETTINGS)
             .setCharacteristicUuid(this.CHARACTERISTIC_MODULE_STATE)
         ;
     }
 
     createSetLockStateCommandEntity(data) {
-        return (new BluetoothWriteCommandEntity(undefined, data, true, false))
-            .setServiceUuid(this.SERVICE_SETTINGS)
-            .setCharacteristicUuid(this.CHARACTERISTIC_LOCK_STATE)
-        ;
+        return null;
     }
 
     createSetLightningStateCommandEntity(data) {
@@ -207,6 +206,48 @@ export default class {
         return (new BluetoothWriteCommandEntity(undefined, data, true, false))
             .setServiceUuid(this.SERVICE_UPLOAD)
             .setCharacteristicUuid(this.CHARACTERISTIC_FIRMWARE_UPLOAD)
+        ;
+    }
+
+    createSetEncryptionKeyCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(undefined, data, true, false))
+            .setServiceUuid(this.SERVICE_SECURITY)
+            .setCharacteristicUuid(this.CHARACTERISTIC_ENCRYPTION_KEY)
+        ;
+    }
+
+    createSetDistributionKeyCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(undefined, data, true, false))
+            .setServiceUuid(this.SERVICE_SECURITY)
+            .setCharacteristicUuid(this.CHARACTERISTIC_DISTRIBUTION_KEY)
+        ;
+    }
+
+    createSetAlarmModeCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(undefined, data, true, true))
+            .setServiceUuid(this.SERVICE_SETTINGS)
+            .setCharacteristicUuid(this.CHARACTERISTIC_ALARM_SETTING)
+        ;
+    }
+
+    createSetAlarmStateCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(undefined, data, true, true))
+            .setServiceUuid(this.SERVICE_COMMAND)
+            .setCharacteristicUuid(this.CHARACTERISTIC_LOCK_STATE)
+        ;
+    }
+
+    createSetBackupCodeCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(undefined, data, true, true))
+            .setServiceUuid(this.SERVICE_SETTINGS)
+            .setCharacteristicUuid(this.CHARACTERISTIC_BACKUP_CODE)
+        ;
+    }
+
+    createPlaySoundCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(undefined, data, true, true))
+            .setServiceUuid(this.SERVICE_COMMAND)
+            .setCharacteristicUuid(this.CHARACTERISTIC_SOUNDS)
         ;
     }
 };

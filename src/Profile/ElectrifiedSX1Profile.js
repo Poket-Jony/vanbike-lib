@@ -13,6 +13,8 @@ import UnitStateEntity from '../Entity/UnitStateEntity';
 import RunModeStateEntity from '../Entity/RunModeStateEntity';
 
 export default class {
+    PASSCODE_LENGTH = 6;
+
     SERVICE_BIKE = '8e7f1a50-087a-44c9-b292-a2c628fdd9aa';
     CHARACTERISTIC_CHALLENGE = '8e7f1a51-087a-44c9-b292-a2c628fdd9aa';
     CHARACTERISTIC_NEW_PRIVATE_KEY = '8e7f1a52-087a-44c9-b292-a2c628fdd9aa';

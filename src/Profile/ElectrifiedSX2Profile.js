@@ -8,6 +8,8 @@ import RegionStateEntity from '../Entity/RegionStateEntity';
 import ModuleStateEntity from '../Entity/ModuleStateEntity';
 
 export default class extends ElectrifiedSX1Profile {
+    PASSCODE_LENGTH = 12;
+
     createParametersEntity(parametersData) {
         const moduleState = new ModuleStateEntity();
         const trackingState = new TrackingStateEntity((parametersData[2] & 16) >> 4);

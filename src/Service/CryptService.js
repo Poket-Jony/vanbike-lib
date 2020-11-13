@@ -5,10 +5,17 @@ export default class {
     _passcode;
     _aes;
 
-    constructor(encryptionKey)
+    constructor(encryptionKey, passcodeLength)
     {
         this._key = new Uint8Array(aesjs.utils.hex.toBytes(encryptionKey));
-        this._passcode = this._key.subarray(0, 6);
+        if(this._key.length === 17) {
+            this._key = this._key.subarray(1, this._key.length);
+        } else if(this._key.length < 16) {
+            const key = new Uint8Array(16);
+            key.set(this._key, 16 - this._key.length);
+            this._key = key;
+        }
+        this._passcode = this._key.subarray(0, passcodeLength);
         this._aes = new aesjs.ModeOfOperation.ecb(this._key);
     }
 

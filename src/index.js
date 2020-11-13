@@ -28,9 +28,12 @@ import PowerLevelStateEntity from './Entity/PowerLevelStateEntity';
 import RegionStateEntity from './Entity/RegionStateEntity';
 import RunModeStateEntity from './Entity/RunModeStateEntity';
 import UnitStateEntity from './Entity/UnitStateEntity';
+import AlarmModeStateEntity from './Entity/AlarmModeStateEntity';
 import AlarmStateEntity from './Entity/AlarmStateEntity';
 import SleepStateEntity from './Entity/SleepStateEntity';
 import TrackingStateEntity from './Entity/TrackingStateEntity';
+import SoundStateEntity from './Entity/SoundStateEntity';
+import MuteSoundStateEntity from './Entity/MuteSoundStateEntity';
 
 export {
     //Drivers
@@ -63,7 +66,10 @@ export {
     RegionStateEntity,
     RunModeStateEntity,
     UnitStateEntity,
+    AlarmModeStateEntity,
     AlarmStateEntity,
     SleepStateEntity,
     TrackingStateEntity,
+    SoundStateEntity,
+    MuteSoundStateEntity,
 };
