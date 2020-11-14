@@ -29,7 +29,7 @@
 * Electrified S/X 1 (2016/2017) - tested
 * Smart S/X 1 (2018) - unsupported (work in progress)
 * Electrified S/X 2 - untested (some parameters/functions missing)
-* Electrified S/X 3 - untested (some parameters/functions missing)
+* Electrified S/X 3 - unsupported (work in progress)
 
 #### Browsers
 See [full list](https://developer.mozilla.org/docs/Web/API/Web_Bluetooth_API#Browser_compatibility).
