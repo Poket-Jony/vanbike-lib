@@ -1,5 +1,188 @@
 import ElectrifiedSX2Profile from './ElectrifiedSX2Profile';
+import BluetoothConfigEntity from '../Entity/Bluetooth/BluetoothConfigEntity';
+import BluetoothSubscriberEntity from '../Entity/Bluetooth/BluetoothSubscriberEntity';
+import BluetoothReadCommandEntity from '../Entity/Bluetooth/BluetoothReadCommandEntity';
+import BluetoothWriteCommandEntity from '../Entity/Bluetooth/BluetoothWriteCommandEntity';
 
 export default class extends ElectrifiedSX2Profile {
     PASSCODE_LENGTH = 12;
+
+    SERVICE_SECURITY = '6ACC5500-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_CHALLENGE = '6ACC5501-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_KEY_INDEX = '6ACC5502-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_BACKUP_CODE = '6ACC5503-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_BIKE_MESSAGE = '6ACC5505-E631-4069-944D-B8CA7598AD50';
+
+    SERVICE_FIRMWARE = '6ACC5510-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_FIRMWARE_METADATA = '6ACC5511-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_FIRMWARE_BLOCK = '6ACC5512-E631-4069-944D-B8CA7598AD50';
+
+    SERVICE_DEFENCE = '6ACC5520-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_LOCK_STATE = '6ACC5521-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_UNLOCK_REQUEST = '6ACC5522-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_ALARM_STATE = '6ACC5523-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_ALARM_MODE = '6ACC5524-E631-4069-944D-B8CA7598AD50';
+
+    SERVICE_MOVEMENT = '6ACC5530-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_DISTANCE = '6ACC5531-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_SPEED = '6ACC5532-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_UNIT_SYSTEM = '6ACC5533-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_POWER_LEVEL = '6ACC5534-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_SPEED_LIMIT = '6ACC5535-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_E_SHIFTER_GEAR = '6ACC5536-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_E_SHIFTIG_POINTS = '6ACC5537-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_E_SHIFTER_MODE = '6ACC5538-E631-4069-944D-B8CA7598AD50';
+
+    SERVICE_BIKE_INFO = '6ACC5540-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_MOTOR_BATTERY_LEVEL = '6ACC5541-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_MOTOR_BATTERY_STATE = '6ACC5542-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_MODULE_BATTERY_LEVEL = '6ACC5543-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_MODULE_BATTERY_STATE = '6ACC5544-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_BIKE_FIRMWARE_VERSION = '6ACC554A-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_BLE_CHIP_FIRMWARE_VERSION = '6ACC554B-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_CONTROLLER_FIRMWARE_VERSION = '6ACC554C-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_PCBA_HARDWARE_VERSION = '6ACC554D-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_GSM_FIRMWARE_VERSION = '6ACC554E-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_E_SHIFTER_FIRMWARE_VERSION = '6ACC554F-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_BATTERY_FIRMWARE_VERSION = '6ACC5550-E631-4069-944D-B8CA7598AD50';
+
+    SERVICE_BIKE_STATE = '6ACC5560-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_MODULE_MODE = '6ACC5561-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_MODULE_STATE = '6ACC5562-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_ERRORS = '6ACC5563-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_WHEEL_SIZE = '6ACC5564-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_CLOCK = '6ACC5567-E631-4069-944D-B8CA7598AD50';
+
+    SERVICE_SOUND = '6ACC5570-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_PLAY_SOUND = '6ACC5571-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_SOUND_VOLUME = '6ACC5572-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_BELL_SOUND = '6ACC5574-E631-4069-944D-B8CA7598AD50';
+
+    SERVICE_LIGHT = '6ACC5580-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_LIGHT_MODE = '6ACC5581-E631-4069-944D-B8CA7598AD50';
+
+    SERVICE_MAINTENANCE = '6ACC55C0-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_LOG_MODE = '6ACC55C1-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_LOG_SIZE = '6ACC55C2-E631-4069-944D-B8CA7598AD50';
+    CHARACTERISTIC_LOG_BLOCK = '6ACC55C3-E631-4069-944D-B8CA7598AD50';
+
+    createBluetoothConfigEntity() {
+        const primaryServicesAndCharacteristics = {};
+        primaryServicesAndCharacteristics[this.SERVICE_SECURITY] = [
+            this.CHARACTERISTIC_CHALLENGE,
+            this.CHARACTERISTIC_KEY_INDEX,
+            this.CHARACTERISTIC_BACKUP_CODE,
+            this.CHARACTERISTIC_BIKE_MESSAGE,
+        ];
+
+        primaryServicesAndCharacteristics[this.SERVICE_DEFENCE] = [
+            this.CHARACTERISTIC_LOCK_STATE,
+            this.CHARACTERISTIC_UNLOCK_REQUEST,
+            this.CHARACTERISTIC_ALARM_STATE,
+            this.CHARACTERISTIC_ALARM_MODE,
+        ];
+
+        primaryServicesAndCharacteristics[this.SERVICE_MOVEMENT] = [
+            this.CHARACTERISTIC_DISTANCE,
+            this.CHARACTERISTIC_SPEED,
+            this.CHARACTERISTIC_UNIT_SYSTEM,
+            this.CHARACTERISTIC_POWER_LEVEL,
+            this.CHARACTERISTIC_SPEED_LIMIT,
+            this.CHARACTERISTIC_E_SHIFTER_GEAR,
+            this.CHARACTERISTIC_E_SHIFTIG_POINTS,
+            this.CHARACTERISTIC_E_SHIFTER_MODE,
+        ];
+
+        primaryServicesAndCharacteristics[this.SERVICE_BIKE_INFO] = [
+            this.CHARACTERISTIC_MOTOR_BATTERY_LEVEL,
+            this.CHARACTERISTIC_MOTOR_BATTERY_STATE,
+            this.CHARACTERISTIC_MODULE_BATTERY_LEVEL,
+            this.CHARACTERISTIC_MODULE_BATTERY_STATE,
+            this.CHARACTERISTIC_BIKE_FIRMWARE_VERSION,
+            this.CHARACTERISTIC_BLE_CHIP_FIRMWARE_VERSION,
+            this.CHARACTERISTIC_CONTROLLER_FIRMWARE_VERSION,
+            this.CHARACTERISTIC_PCBA_HARDWARE_VERSION,
+            this.CHARACTERISTIC_GSM_FIRMWARE_VERSION,
+            this.CHARACTERISTIC_E_SHIFTER_FIRMWARE_VERSION,
+            this.CHARACTERISTIC_BATTERY_FIRMWARE_VERSION,
+        ];
+
+        primaryServicesAndCharacteristics[this.SERVICE_BIKE_STATE] = [
+            this.CHARACTERISTIC_MODULE_MODE,
+            this.CHARACTERISTIC_MODULE_STATE,
+            this.CHARACTERISTIC_ERRORS,
+            this.CHARACTERISTIC_WHEEL_SIZE,
+            this.CHARACTERISTIC_CLOCK,
+        ];
+
+        primaryServicesAndCharacteristics[this.SERVICE_SOUND] = [
+            this.CHARACTERISTIC_PLAY_SOUND,
+            this.CHARACTERISTIC_SOUND_VOLUME,
+            this.CHARACTERISTIC_BELL_SOUND,
+        ];
+
+        primaryServicesAndCharacteristics[this.SERVICE_LIGHT] = [
+            this.CHARACTERISTIC_LIGHT_MODE,
+        ];
+
+        primaryServicesAndCharacteristics[this.SERVICE_MAINTENANCE] = [
+            this.CHARACTERISTIC_LOG_MODE,
+            this.CHARACTERISTIC_LOG_SIZE,
+            this.CHARACTERISTIC_LOG_BLOCK,
+        ];
+
+        const optionalServicesAndCharacteristics = {};
+        optionalServicesAndCharacteristics[this.SERVICE_FIRMWARE] = [
+            this.CHARACTERISTIC_FIRMWARE_METADATA,
+            this.CHARACTERISTIC_FIRMWARE_BLOCK,
+        ];
+        return new BluetoothConfigEntity(primaryServicesAndCharacteristics, optionalServicesAndCharacteristics);
+    }
+
+    createBluetoothSubscriberEntity(callback) {
+        //@todo
+        return new BluetoothSubscriberEntity('', '', callback);
+    }
+
+    createChallengeCodeCommandEntity() {
+        return (new BluetoothReadCommandEntity(false))
+            .setServiceUuid(this.SERVICE_SECURITY)
+            .setCharacteristicUuid(this.CHARACTERISTIC_CHALLENGE)
+        ;
+    }
+
+    createAuthenticateCommandEntity(passcode) {
+        return (new BluetoothWriteCommandEntity(undefined, passcode))
+            .setServiceUuid(this.SERVICE_SECURITY)
+            .setCharacteristicUuid(this.CHARACTERISTIC_KEY_INDEX)
+        ;
+    }
+
+    createSetModuleStateCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(undefined, data))
+            .setServiceUuid(this.SERVICE_BIKE_STATE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_MODULE_STATE)
+        ;
+    }
+
+    createSetLockStateCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(undefined, data))
+            .setServiceUuid(this.SERVICE_DEFENCE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_LOCK_STATE)
+        ;
+    }
+
+    createSetLightningStateCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(undefined, data))
+            .setServiceUuid(this.SERVICE_LIGHT)
+            .setCharacteristicUuid(this.CHARACTERISTIC_LIGHT_MODE)
+        ;
+    }
+
+    createSetPowerLevelStateCommandEntity(data) {
+        return (new BluetoothWriteCommandEntity(undefined, data))
+            .setServiceUuid(this.SERVICE_MOVEMENT)
+            .setCharacteristicUuid(this.CHARACTERISTIC_POWER_LEVEL)
+        ;
+    }
 };

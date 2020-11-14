@@ -122,7 +122,7 @@ export default class {
     }
 
     createAuthenticateCommandEntity(passcode) {
-        return (new BluetoothWriteCommandEntity(undefined, passcode, true, true))
+        return (new BluetoothWriteCommandEntity(undefined, passcode))
             .setServiceUuid(this.SERVICE_SECURITY)
             .setCharacteristicUuid(this.CHARACTERISTIC_PASSCODE)
         ;
@@ -153,7 +153,7 @@ export default class {
     }
 
     createSetModuleStateCommandEntity(data) {
-        return (new BluetoothWriteCommandEntity(undefined, data, true, true))
+        return (new BluetoothWriteCommandEntity(undefined, data))
             .setServiceUuid(this.SERVICE_SETTINGS)
             .setCharacteristicUuid(this.CHARACTERISTIC_MODULE_STATE)
         ;
@@ -224,28 +224,28 @@ export default class {
     }
 
     createSetAlarmModeCommandEntity(data) {
-        return (new BluetoothWriteCommandEntity(undefined, data, true, true))
+        return (new BluetoothWriteCommandEntity(undefined, data))
             .setServiceUuid(this.SERVICE_SETTINGS)
             .setCharacteristicUuid(this.CHARACTERISTIC_ALARM_SETTING)
         ;
     }
 
     createSetAlarmStateCommandEntity(data) {
-        return (new BluetoothWriteCommandEntity(undefined, data, true, true))
+        return (new BluetoothWriteCommandEntity(undefined, data))
             .setServiceUuid(this.SERVICE_COMMAND)
             .setCharacteristicUuid(this.CHARACTERISTIC_LOCK_STATE)
         ;
     }
 
     createSetBackupCodeCommandEntity(data) {
-        return (new BluetoothWriteCommandEntity(undefined, data, true, true))
+        return (new BluetoothWriteCommandEntity(undefined, data))
             .setServiceUuid(this.SERVICE_SETTINGS)
             .setCharacteristicUuid(this.CHARACTERISTIC_BACKUP_CODE)
         ;
     }
 
     createPlaySoundCommandEntity(data) {
-        return (new BluetoothWriteCommandEntity(undefined, data, true, true))
+        return (new BluetoothWriteCommandEntity(undefined, data))
             .setServiceUuid(this.SERVICE_COMMAND)
             .setCharacteristicUuid(this.CHARACTERISTIC_SOUNDS)
         ;
