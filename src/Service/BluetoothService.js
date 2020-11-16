@@ -124,14 +124,17 @@ export default class {
         }
 
         let data = new Uint8Array(16);
+        let dataPositionOffset = 0;
         if(bluetoothCommand.isChallengeCodeNeeded()) {
+            dataPositionOffset = 2;
             data.set(await this.getChallengeCode(), 0);
-            data.set(bluetoothCommand.getCommand(), 2);
-            if(bluetoothCommand.getData()) {
-                data.set(bluetoothCommand.getData(), 3);
+            if(bluetoothCommand.getCommand()) {
+                data.set(bluetoothCommand.getCommand(), 2);
+                dataPositionOffset = 3;
             }
-        } else if(bluetoothCommand.getData()) {
-            data.set(bluetoothCommand.getData(), 0);
+        }
+        if(bluetoothCommand.getData()) {
+            data.set(bluetoothCommand.getData(), dataPositionOffset);
         }
         if(bluetoothCommand.isEncryptionNeeded()) {
             data = this._cryptService.encrypt(data);
