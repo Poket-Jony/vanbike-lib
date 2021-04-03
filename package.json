@@ -10,16 +10,6 @@
   },
   "license": "MIT",
   "scripts": {
-    "dev": "yarn encore dev",
-    "prod": "yarn encore production"
-  },
-  "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.10.4",
-    "@babel/plugin-transform-runtime": "^7.11.5",
-    "@symfony/webpack-encore": "^0.31.0"
-  },
-  "dependencies": {
-    "aes-js": "^3.1.2",
-    "axios": "^0.20.0"
+    "example": "npx servor ./ example/index.html"
   }
 }

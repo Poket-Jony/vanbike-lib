@@ -27,8 +27,9 @@
     <button id="setPowerLevel">Set Power Level</button>
 </div>
 
-<script type="text/javascript" src="../dist/vanbike-lib.js"></script>
-<script type="text/javascript">
+<script type="module">
+    import * as VanBikeLib from '../src/index.js'
+    
     document.querySelector('#retrieveEncryptionKey').addEventListener('click', async () => {
         const webService = new VanBikeLib.WebService();
         const success = await webService.authenticate(document.querySelector('#username').value, document.querySelector('#password').value);

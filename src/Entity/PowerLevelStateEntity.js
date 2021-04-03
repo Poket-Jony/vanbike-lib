@@ -1,4 +1,4 @@
-import AbstractStateEntity from './AbstractStateEntity';
+import AbstractStateEntity from './AbstractStateEntity.js';
 
 export default class extends AbstractStateEntity {
     STATE_LEVEL_OFF = new Uint8Array([0]);

@@ -1,39 +1,39 @@
 // Drivers
-import WebBluetoothDriver from './Driver/WebBluetoothDriver';
+import WebBluetoothDriver from './Driver/WebBluetoothDriver.js';
 
 // Services
-import VanBikeService from './Service/VanBikeService';
-import BluetoothService from './Service/BluetoothService';
-import CryptService from './Service/CryptService';
-import WebService from './Service/WebService';
+import VanBikeService from './Service/VanBikeService.js';
+import BluetoothService from './Service/BluetoothService.js';
+import CryptService from './Service/CryptService.js';
+import WebService from './Service/WebService.js';
 
 // Profiles
-import ElectrifiedSX1Profile from './Profile/ElectrifiedSX1Profile';
-import ElectrifiedSX2Profile from './Profile/ElectrifiedSX2Profile';
-import ElectrifiedSX3Profile from './Profile/ElectrifiedSX3Profile';
-import SmartSX1Profile from './Profile/SmartSX1Profile';
+import ElectrifiedSX1Profile from './Profile/ElectrifiedSX1Profile.js';
+import ElectrifiedSX2Profile from './Profile/ElectrifiedSX2Profile.js';
+import ElectrifiedSX3Profile from './Profile/ElectrifiedSX3Profile.js';
+import SmartSX1Profile from './Profile/SmartSX1Profile.js';
 
 // Entities
-import BluetoothReadCommandEntity from './Entity/Bluetooth/BluetoothReadCommandEntity';
-import BluetoothWriteCommandEntity from './Entity/Bluetooth/BluetoothWriteCommandEntity';
-import BluetoothConfigEntity from './Entity/Bluetooth/BluetoothConfigEntity';
-import BluetoothSubscriberEntity from './Entity/Bluetooth/BluetoothSubscriberEntity';
-import ParametersEntity from './Entity/ParametersEntity';
-import BatteryStateEntity from './Entity/BatteryStateEntity';
-import ErrorCodeStateEntity from './Entity/ErrorCodeStateEntity';
-import LightningStateEntity from './Entity/LightningStateEntity';
-import LockStateEntity from './Entity/LockStateEntity';
-import ModuleStateEntity from './Entity/ModuleStateEntity';
-import PowerLevelStateEntity from './Entity/PowerLevelStateEntity';
-import RegionStateEntity from './Entity/RegionStateEntity';
-import RunModeStateEntity from './Entity/RunModeStateEntity';
-import UnitStateEntity from './Entity/UnitStateEntity';
-import AlarmModeStateEntity from './Entity/AlarmModeStateEntity';
-import AlarmStateEntity from './Entity/AlarmStateEntity';
-import SleepStateEntity from './Entity/SleepStateEntity';
-import TrackingStateEntity from './Entity/TrackingStateEntity';
-import SoundStateEntity from './Entity/SoundStateEntity';
-import MuteSoundStateEntity from './Entity/MuteSoundStateEntity';
+import BluetoothReadCommandEntity from './Entity/Bluetooth/BluetoothReadCommandEntity.js';
+import BluetoothWriteCommandEntity from './Entity/Bluetooth/BluetoothWriteCommandEntity.js';
+import BluetoothConfigEntity from './Entity/Bluetooth/BluetoothConfigEntity.js';
+import BluetoothSubscriberEntity from './Entity/Bluetooth/BluetoothSubscriberEntity.js';
+import ParametersEntity from './Entity/ParametersEntity.js';
+import BatteryStateEntity from './Entity/BatteryStateEntity.js';
+import ErrorCodeStateEntity from './Entity/ErrorCodeStateEntity.js';
+import LightningStateEntity from './Entity/LightningStateEntity.js';
+import LockStateEntity from './Entity/LockStateEntity.js';
+import ModuleStateEntity from './Entity/ModuleStateEntity.js';
+import PowerLevelStateEntity from './Entity/PowerLevelStateEntity.js';
+import RegionStateEntity from './Entity/RegionStateEntity.js';
+import RunModeStateEntity from './Entity/RunModeStateEntity.js';
+import UnitStateEntity from './Entity/UnitStateEntity.js';
+import AlarmModeStateEntity from './Entity/AlarmModeStateEntity.js';
+import AlarmStateEntity from './Entity/AlarmStateEntity.js';
+import SleepStateEntity from './Entity/SleepStateEntity.js';
+import TrackingStateEntity from './Entity/TrackingStateEntity.js';
+import SoundStateEntity from './Entity/SoundStateEntity.js';
+import MuteSoundStateEntity from './Entity/MuteSoundStateEntity.js';
 
 export {
     //Drivers

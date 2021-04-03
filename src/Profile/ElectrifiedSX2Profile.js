@@ -1,11 +1,11 @@
-import ElectrifiedSX1Profile from './ElectrifiedSX1Profile';
-import TrackingStateEntity from '../Entity/TrackingStateEntity';
-import SleepStateEntity from '../Entity/SleepStateEntity';
-import AlarmStateEntity from '../Entity/AlarmStateEntity';
-import LightningStateEntity from '../Entity/LightningStateEntity';
-import UnitStateEntity from '../Entity/UnitStateEntity';
-import RegionStateEntity from '../Entity/RegionStateEntity';
-import ModuleStateEntity from '../Entity/ModuleStateEntity';
+import ElectrifiedSX1Profile from './ElectrifiedSX1Profile.js';
+import TrackingStateEntity from '../Entity/TrackingStateEntity.js';
+import SleepStateEntity from '../Entity/SleepStateEntity.js';
+import AlarmStateEntity from '../Entity/AlarmStateEntity.js';
+import LightningStateEntity from '../Entity/LightningStateEntity.js';
+import UnitStateEntity from '../Entity/UnitStateEntity.js';
+import RegionStateEntity from '../Entity/RegionStateEntity.js';
+import ModuleStateEntity from '../Entity/ModuleStateEntity.js';
 
 export default class extends ElectrifiedSX1Profile {
     PASSCODE_LENGTH = 12;

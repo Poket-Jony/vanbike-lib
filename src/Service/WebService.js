@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'https://cdn.skypack.dev/axios@^0.20.0';
 
 export default class {
     BASE_URL = 'https://my.vanmoof.com/api/v8';

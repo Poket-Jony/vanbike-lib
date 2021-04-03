@@ -1,8 +1,8 @@
-import ElectrifiedSX2Profile from './ElectrifiedSX2Profile';
-import BluetoothConfigEntity from '../Entity/Bluetooth/BluetoothConfigEntity';
-import BluetoothSubscriberEntity from '../Entity/Bluetooth/BluetoothSubscriberEntity';
-import BluetoothReadCommandEntity from '../Entity/Bluetooth/BluetoothReadCommandEntity';
-import BluetoothWriteCommandEntity from '../Entity/Bluetooth/BluetoothWriteCommandEntity';
+import ElectrifiedSX2Profile from './ElectrifiedSX2Profile.js';
+import BluetoothConfigEntity from '../Entity/Bluetooth/BluetoothConfigEntity.js';
+import BluetoothSubscriberEntity from '../Entity/Bluetooth/BluetoothSubscriberEntity.js';
+import BluetoothReadCommandEntity from '../Entity/Bluetooth/BluetoothReadCommandEntity.js';
+import BluetoothWriteCommandEntity from '../Entity/Bluetooth/BluetoothWriteCommandEntity.js';
 
 export default class extends ElectrifiedSX2Profile {
     PASSCODE_LENGTH = 12;
