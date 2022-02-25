@@ -8,9 +8,10 @@
 <div>
     <input id="username" type="text" placeholder="Username">
     <input id="password" type="password" placeholder="Password">
-    <button id="retrieveEncryptionKey">Retrieve Encryption-Key</button>
+    <button id="retrieveEncryptionData">Retrieve Encryption-Data</button>
     <br><br>
     <input id="encryptionKey" type="text" placeholder="Encryption-Key">
+    <input id="userKeyId" type="number" placeholder="User-Key-Id" value="1" min="1">
     <button id="connect">Connect</button>
     <button id="disconnect">Disconnect</button>
 </div>
@@ -30,23 +31,36 @@
 <script type="module">
     import * as VanBikeLib from '../src/index.js'
     
-    document.querySelector('#retrieveEncryptionKey').addEventListener('click', async () => {
+    document.querySelector('#retrieveEncryptionData').addEventListener('click', async () => {
         const webService = new VanBikeLib.WebService();
         const success = await webService.authenticate(document.querySelector('#username').value, document.querySelector('#password').value);
         if(success) {
-            document.querySelector('#encryptionKey').value = await webService.getEncryptionKey();
+            let keyData = await webService.getKeyData();
+            document.querySelector('#encryptionKey').value = keyData.encryptionKey;
+            document.querySelector('#userKeyId').value = keyData.userKeyId;
         }
     });
 
     document.querySelector('#connect').addEventListener('click', async () => {
-        const bikeProfile = new VanBikeLib.ElectrifiedSX1Profile();
-        window.vanBikeService = new VanBikeLib.VanBikeService(bikeProfile, document.querySelector('#encryptionKey').value);
-        vanBikeService.subscribe((parameters) => {
-            console.log(parameters);
-        });
-        await vanBikeService.connect();
+        const bikeProfile = new VanBikeLib.ElectrifiedSX3Profile();
+        window.vanBikeService = new VanBikeLib.VanBikeService(
+            bikeProfile,
+            document.querySelector('#encryptionKey').value,
+            document.querySelector('#userKeyId').value
+        );
 
+        await vanBikeService.connect();
         await vanBikeService.authenticate();
+
+       /* const subscriberEntity = bikeProfile.createBluetoothSubscriberEntity((parameters) => {
+            console.log(parameters);
+        });*/
+        const subscriberEntity = new VanBikeLib.BluetoothSubscriberEntity(bikeProfile.SERVICE_DEFENCE, bikeProfile.CHARACTERISTIC_LOCK_STATE, (buffer) => {
+            console.log(buffer);
+        });
+        await vanBikeService.subscribe(subscriberEntity);
+
+        //await vanBikeService.getLockState();
     });
 
     document.querySelector('#disconnect').addEventListener('click', async () => {
@@ -70,7 +84,8 @@
     document.querySelector('#unlock').addEventListener('click', async () => {
         // Unlock
         const lockState = new VanBikeLib.LockStateEntity();
-        lockState.setState(lockState.STATE_UNLOCKED);
+        //lockState.setState(lockState.STATE_UNLOCKED);
+        lockState.setState(lockState.ACTION_UNLOCK);
         await vanBikeService.setLockState(lockState);
     });
 

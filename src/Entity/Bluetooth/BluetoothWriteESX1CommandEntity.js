@@ -1,9 +1,10 @@
 import AbstractBluetoothCommandEntity from './AbstractBluetoothCommandEntity.js'
 
 export default class extends AbstractBluetoothCommandEntity {
-  command
-  data
-  useChallengeCode
+  _command
+  _data
+  _useEncryption
+  _useChallengeCode
 
   constructor(
     command = undefined,
@@ -12,21 +13,25 @@ export default class extends AbstractBluetoothCommandEntity {
     useChallengeCode = true
   ) {
     super()
-    this.command = command
-    this.data = data
-    this.useEncryption = useEncryption
-    this.useChallengeCode = useChallengeCode
+    this._command = command
+    this._data = data
+    this._useEncryption = useEncryption
+    this._useChallengeCode = useChallengeCode
   }
 
   getCommand() {
-    return this.command
+    return this._command
   }
 
   getData() {
-    return this.data
+    return this._data
+  }
+
+  isEncryptionNeeded() {
+    return this._useEncryption;
   }
 
   isChallengeCodeNeeded() {
-    return this.useChallengeCode
+    return this._useChallengeCode
   }
 }

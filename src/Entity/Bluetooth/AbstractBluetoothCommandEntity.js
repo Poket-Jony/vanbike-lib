@@ -1,27 +1,22 @@
 export default class {
-    serviceUuid;
-    characteristicUuid;
-    useEncryption;
+    _serviceUuid;
+    _characteristicUuid;
 
     getServiceUuid() {
-        return this.serviceUuid;
+        return this._serviceUuid;
     }
 
     setServiceUuid(serviceUuid) {
-        this.serviceUuid = serviceUuid;
+        this._serviceUuid = serviceUuid;
         return this;
     }
 
     getCharacteristicUuid() {
-        return this.characteristicUuid;
+        return this._characteristicUuid;
     }
 
     setCharacteristicUuid(characteristicUuid) {
-        this.characteristicUuid = characteristicUuid;
+        this._characteristicUuid = characteristicUuid;
         return this;
-    }
-
-    isEncryptionNeeded() {
-        return this.useEncryption;
     }
 };

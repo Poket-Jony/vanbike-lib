@@ -1,5 +1,5 @@
 import BluetoothReadCommandEntity from '../Entity/Bluetooth/BluetoothReadCommandEntity.js';
-import BluetoothWriteCommandEntity from '../Entity/Bluetooth/BluetoothWriteCommandEntity.js';
+import BluetoothWriteCommandEntity from '../Entity/Bluetooth/BluetoothWriteESX1CommandEntity.js';
 import BluetoothConfigEntity from '../Entity/Bluetooth/BluetoothConfigEntity.js';
 import BluetoothSubscriberEntity from '../Entity/Bluetooth/BluetoothSubscriberEntity.js';
 import ParametersEntity from '../Entity/ParametersEntity.js';

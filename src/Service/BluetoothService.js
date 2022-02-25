@@ -56,16 +56,24 @@ export default class {
             }
 
             for (const subscriberEntity of this._subscribers) {
-                const characteristic = this.getCharacteristic(subscriberEntity.getServiceUuid(), subscriberEntity.getCharacteristicUuid());
-                if(characteristic) {
-                    await this._bluetoothDriver.subscribeCharacteristic(characteristic, (buffer) => {
-                        if(subscriberEntity.isEncryptionNeeded()) {
-                            subscriberEntity.getCallback()(this._cryptService.decrypt(buffer));
-                        } else {
-                            subscriberEntity.getCallback()(buffer);
-                        }
-                    });
-                }
+                try {
+                    await this._discoverSubscriber(subscriberEntity)
+                } catch ($e) {}
+            }
+        }
+    }
+
+    async _discoverSubscriber(subscriberEntity) {
+        if(this.isConnected()) {
+            const characteristic = this.getCharacteristic(subscriberEntity.getServiceUuid(), subscriberEntity.getCharacteristicUuid());
+            if(characteristic) {
+                await this._bluetoothDriver.subscribeCharacteristic(characteristic, (buffer) => {
+                    if(subscriberEntity.isEncryptionNeeded()) {
+                        subscriberEntity.getCallback()(this._cryptService.decrypt(buffer));
+                    } else {
+                        subscriberEntity.getCallback()(buffer);
+                    }
+                });
             }
         }
     }
@@ -96,7 +104,8 @@ export default class {
         return (this._gattServer && this._bluetoothDriver.isConnected(this._gattServer));
     }
 
-    subscribe(bluetoothSubscriber) {
+    async subscribe(bluetoothSubscriber) {
+        await this._discoverSubscriber(bluetoothSubscriber);
         return this._subscribers.push(bluetoothSubscriber);
     }
 
@@ -110,7 +119,7 @@ export default class {
             throw new Error('Characteristic "' + bluetoothCommand.getCharacteristicUuid() + '" not found');
         }
 
-        let data = this._bluetoothDriver.readValue(characteristic);
+        let data = await this._bluetoothDriver.readValue(characteristic);
         if(bluetoothCommand.isEncryptionNeeded()) {
             data = this._cryptService.decrypt(data);
         }
@@ -122,24 +131,7 @@ export default class {
         if(!characteristic) {
             throw new Error('Characteristic "' + bluetoothCommand.getCharacteristicUuid() + '" not found');
         }
-
-        let data = new Uint8Array(16);
-        let dataPositionOffset = 0;
-        if(bluetoothCommand.isChallengeCodeNeeded()) {
-            dataPositionOffset = 2;
-            data.set(await this.getChallengeCode(), 0);
-            if(bluetoothCommand.getCommand()) {
-                data.set(bluetoothCommand.getCommand(), 2);
-                dataPositionOffset = 3;
-            }
-        }
-        if(bluetoothCommand.getData()) {
-            data.set(bluetoothCommand.getData(), dataPositionOffset);
-        }
-        if(bluetoothCommand.isEncryptionNeeded()) {
-            data = this._cryptService.encrypt(data);
-        }
-        return this._bluetoothDriver.writeValue(characteristic, data);
+        return this._bluetoothDriver.writeValue(characteristic, await this._bikeProfile.processWriteData(this, bluetoothCommand));
     }
 
     async getChallengeCode() {
@@ -148,5 +140,9 @@ export default class {
             throw Error('Command not found');
         }
         return this.read(command);
+    }
+
+    getCryptService() {
+        return this._cryptService;
     }
 };

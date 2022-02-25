@@ -1,8 +1,14 @@
 import AbstractBluetoothCommandEntity from './AbstractBluetoothCommandEntity.js'
 
 export default class extends AbstractBluetoothCommandEntity {
+  _useEncryption
+
   constructor(useEncryption = true) {
     super()
-    this.useEncryption = useEncryption
+    this._useEncryption = useEncryption
+  }
+
+  isEncryptionNeeded() {
+    return this._useEncryption;
   }
 }

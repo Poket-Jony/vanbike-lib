@@ -2,7 +2,7 @@ import ElectrifiedSX2Profile from './ElectrifiedSX2Profile.js';
 import BluetoothConfigEntity from '../Entity/Bluetooth/BluetoothConfigEntity.js';
 import BluetoothSubscriberEntity from '../Entity/Bluetooth/BluetoothSubscriberEntity.js';
 import BluetoothReadCommandEntity from '../Entity/Bluetooth/BluetoothReadCommandEntity.js';
-import BluetoothWriteCommandEntity from '../Entity/Bluetooth/BluetoothWriteCommandEntity.js';
+import BluetoothWriteCommandEntity from '../Entity/Bluetooth/BluetoothWriteESX3CommandEntity.js';
 
 export default class extends ElectrifiedSX2Profile {
     PASSCODE_LENGTH = 12;
@@ -141,9 +141,20 @@ export default class extends ElectrifiedSX2Profile {
         return new BluetoothConfigEntity(primaryServicesAndCharacteristics, optionalServicesAndCharacteristics);
     }
 
-    createBluetoothSubscriberEntity(callback) {
-        //@todo
-        return new BluetoothSubscriberEntity('', '', callback);
+    async processWriteData(bluetoothService, bluetoothCommand) {
+        let data = new Uint8Array(16);
+        data.set(await bluetoothService.getChallengeCode(), 0);
+        if (bluetoothCommand.getData()) {
+            data.set(bluetoothCommand.getData(), 2);
+        }
+        data = bluetoothService.getCryptService().encrypt(data);
+        if (bluetoothCommand.getPayload()) {
+            let payloadData = new Uint8Array(20);
+            payloadData.set(data, 0);
+            payloadData.set(bluetoothService.getCryptService().padBefore(bluetoothCommand.getPayload(), 4), 16);
+            return payloadData;
+        }
+        return data;
     }
 
     createChallengeCodeCommandEntity() {
@@ -153,36 +164,43 @@ export default class extends ElectrifiedSX2Profile {
         ;
     }
 
-    createAuthenticateCommandEntity(passcode) {
-        return (new BluetoothWriteCommandEntity(undefined, passcode))
+    createAuthenticateCommandEntity(userKeyId) {
+        return (new BluetoothWriteCommandEntity(undefined, userKeyId))
             .setServiceUuid(this.SERVICE_SECURITY)
             .setCharacteristicUuid(this.CHARACTERISTIC_KEY_INDEX)
         ;
     }
 
     createSetModuleStateCommandEntity(data) {
-        return (new BluetoothWriteCommandEntity(undefined, data))
+        return (new BluetoothWriteCommandEntity(data))
             .setServiceUuid(this.SERVICE_BIKE_STATE)
             .setCharacteristicUuid(this.CHARACTERISTIC_MODULE_STATE)
         ;
     }
 
+    createGetLockStateCommandEntity() {
+        return (new BluetoothReadCommandEntity())
+            .setServiceUuid(this.SERVICE_DEFENCE)
+            .setCharacteristicUuid(this.CHARACTERISTIC_LOCK_STATE)
+        ;
+    }
+
     createSetLockStateCommandEntity(data) {
-        return (new BluetoothWriteCommandEntity(undefined, data))
+        return (new BluetoothWriteCommandEntity(data))
             .setServiceUuid(this.SERVICE_DEFENCE)
             .setCharacteristicUuid(this.CHARACTERISTIC_LOCK_STATE)
         ;
     }
 
     createSetLightningStateCommandEntity(data) {
-        return (new BluetoothWriteCommandEntity(undefined, data))
+        return (new BluetoothWriteCommandEntity(data))
             .setServiceUuid(this.SERVICE_LIGHT)
             .setCharacteristicUuid(this.CHARACTERISTIC_LIGHT_MODE)
         ;
     }
 
     createSetPowerLevelStateCommandEntity(data) {
-        return (new BluetoothWriteCommandEntity(undefined, data))
+        return (new BluetoothWriteCommandEntity(data))
             .setServiceUuid(this.SERVICE_MOVEMENT)
             .setCharacteristicUuid(this.CHARACTERISTIC_POWER_LEVEL)
         ;

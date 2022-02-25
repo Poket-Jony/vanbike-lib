@@ -15,7 +15,8 @@ import SmartSX1Profile from './Profile/SmartSX1Profile.js';
 
 // Entities
 import BluetoothReadCommandEntity from './Entity/Bluetooth/BluetoothReadCommandEntity.js';
-import BluetoothWriteCommandEntity from './Entity/Bluetooth/BluetoothWriteCommandEntity.js';
+import BluetoothWriteESX1CommandEntity from './Entity/Bluetooth/BluetoothWriteESX1CommandEntity.js';
+import BluetoothWriteESX3CommandEntity from './Entity/Bluetooth/BluetoothWriteESX3CommandEntity.js';
 import BluetoothConfigEntity from './Entity/Bluetooth/BluetoothConfigEntity.js';
 import BluetoothSubscriberEntity from './Entity/Bluetooth/BluetoothSubscriberEntity.js';
 import ParametersEntity from './Entity/ParametersEntity.js';
@@ -53,7 +54,8 @@ export {
 
     // Entities
     BluetoothReadCommandEntity,
-    BluetoothWriteCommandEntity,
+    BluetoothWriteESX1CommandEntity,
+    BluetoothWriteESX3CommandEntity,
     BluetoothConfigEntity,
     BluetoothSubscriberEntity,
     ParametersEntity,

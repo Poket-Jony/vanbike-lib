@@ -85,9 +85,9 @@ export default class {
         return this._requestGet(url.href);
     }
 
-    async getEncryptionKey(bikeIndex = 0) {
+    async getKeyData(bikeIndex = 0) {
         const data = await this.getCustomerData(true);
-        return data ? data.data.bikeDetails[bikeIndex].key.encryptionKey : null;
+        return data ? data.data.bikeDetails[bikeIndex].key : null;
     }
 
     async getBikeData(bikeId) {
